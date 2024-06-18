@@ -1,0 +1,11 @@
+:root {
+  font-family: HarmonyOSHans-Light, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.25rem; /* 20px */
+}
+
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}

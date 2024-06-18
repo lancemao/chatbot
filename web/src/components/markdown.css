@@ -1,0 +1,37 @@
+.markdown-body {
+  display: block;
+  margin: 0;
+  color: #101828;
+  background-color: transparent;
+  user-select: text;
+  word-wrap: normal;
+  border-radius: 3px;
+  line-height: 1.5;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.markdown-code-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 6px 4px;
+  background-color: white;
+  box-sizing: content-box;
+  border-radius: 4px 4px 0 0;
+}
+
+pre code {
+  white-space: pre-wrap !important;
+}
+
+/* special handling for paragraph */
+.markdown-body > *:last-child {
+  margin-bottom: 0 !important;
+}
+
+p {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
