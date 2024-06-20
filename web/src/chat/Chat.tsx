@@ -10,6 +10,7 @@ import Answer from "./Answer";
 import Question from "./Question";
 import RespondIndicator from "./RespondIndicator";
 import AppContext from "@/AppContext";
+import StopRespondingButton from "./StopRespondingButton";
 
 const Chat = () => {
 
@@ -19,6 +20,10 @@ const Chat = () => {
 
   // while agent is thinking, we will show loading animation as well as a cancel button
   const [responding, setResponding] = useState(false);
+  const [abortController, setAbortController] = useState<AbortController>();
+
+  // for example, when user double click question we will paste it to input box
+  const [queryItem, setQueryItem] = useState<ConversationItem>();
 
   useEffect(() => {
     if (appInfo) {
@@ -69,12 +74,12 @@ const Chat = () => {
       // when user starts the very first conversation, the currentConversation is null
       // by passing '' to backend, it will create a new conversation for us
       const conversationId = currentConversation?.id || '';
-      sendMessage(appInfo?.code, conversationId, query, { onData, onCompleted });
+      sendMessage(appInfo?.code, conversationId, query, { onData, onCompleted, getAbortController });
     }
   }
 
   const onData: IOnData = (message: string, isFirstMessage: boolean, moreInfo: IOnDataMoreInfo) => {
-    console.log('message')
+    console.log('onData', message, isFirstMessage, moreInfo)
     setCurrentConversationId(moreInfo.conversationId)
     setContentList(preContentList => {
       let existingMessage = preContentList.find(item => item.id === moreInfo.messageId);
@@ -88,8 +93,20 @@ const Chat = () => {
   }
 
   const onCompleted: IOnCompleted = (hasError?: boolean, errorMessage?: string) => {
-    console.log('completed', hasError, errorMessage)
     setResponding(false);
+  }
+
+  const getAbortController = (controller: AbortController) => {
+    setAbortController(controller);
+  }
+
+  const onStopRespondingClick = () => {
+    setResponding(false);
+    abortController?.abort('user canceled query')
+  }
+
+  const onQuestionDoubleClick = (item: ConversationItem) => {
+    setQueryItem({ ...item })
   }
 
   return (
@@ -99,7 +116,7 @@ const Chat = () => {
         {
           contentList.map((item, index) => {
             if (item.type === 'Q') {
-              return <Question key={index} item={item} />
+              return <Question key={index} item={item} onDoubleClick={() => onQuestionDoubleClick(item)} />
             } else if (item.type === 'A') {
               return <Answer key={index} content={item.content} />
             }
@@ -107,7 +124,8 @@ const Chat = () => {
         }
         <RespondIndicator responding={responding} />
       </div>
-      <Input onSend={onSend} />
+      <StopRespondingButton responding={responding} onClick={onStopRespondingClick} />
+      <Input queryItem={queryItem} onSend={onSend} />
     </div>
   )
 }

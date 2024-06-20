@@ -1,6 +1,6 @@
 import React from "react"
 
-import './loading.css'
+import './responding.css'
 
 const Header = ({ responding }) => {
   return (

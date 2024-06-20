@@ -26,6 +26,12 @@ pre code {
   white-space: pre-wrap !important;
 }
 
+a:-webkit-any-link{
+  text-decoration: none;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
 /* special handling for paragraph */
 .markdown-body > *:last-child {
   margin-bottom: 0 !important;

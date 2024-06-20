@@ -6,7 +6,7 @@ import { ConversationItem } from "@/types/app"
 import img_user from '@/assets/images/user_profile.svg';
 import AppContext from "@/AppContext";
 
-const Question = ({ item }: { item: ConversationItem }) => {
+const Question = ({ item, onDoubleClick }: { item: ConversationItem, onDoubleClick: () => void}) => {
 
   const { user } = useContext(AppContext)
 
@@ -17,7 +17,7 @@ const Question = ({ item }: { item: ConversationItem }) => {
   return (
     <div className='conversation-content-container'>
       <div className="chat-icon-container"></div>
-      <div className="qa-content question-content">
+      <div className="qa-content question-content" onDoubleClick={onDoubleClick}>
         <div className="qa-text question-text">
           {item.content}
         </div>

@@ -1,0 +1,82 @@
+.voice-input-animator-bar-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /*     background: black; */
+}
+
+.voice-input-animator-bar {
+  background: #3166EA;
+  bottom: 1px;
+  height: 3px;
+  width: 6px;
+  margin: 0px 2px;
+  border-radius: 3px;
+  animation: sound 0ms -600ms linear infinite alternate;
+}
+
+.voice-input-animator-bar-cancel {
+  background: #FF5733;
+}
+
+@keyframes sound {
+  0% {
+    opacity: .35;
+    height: 3px;
+  }
+
+  100% {
+    opacity: 1;
+    height: 20px;
+  }
+}
+
+.voice-input-animator-bar:nth-child(1) {
+  left: 1px;
+  animation-duration: 474ms;
+}
+
+.voice-input-animator-bar:nth-child(2) {
+  left: 15px;
+  animation-duration: 433ms;
+}
+
+.voice-input-animator-bar:nth-child(3) {
+  left: 29px;
+  animation-duration: 407ms;
+}
+
+.voice-input-animator-bar:nth-child(4) {
+  left: 43px;
+  animation-duration: 458ms;
+}
+
+.voice-input-animator-bar:nth-child(5) {
+  left: 57px;
+  animation-duration: 400ms;
+}
+
+.voice-input-animator-bar:nth-child(6) {
+  left: 71px;
+  animation-duration: 427ms;
+}
+
+.voice-input-animator-bar:nth-child(7) {
+  left: 85px;
+  animation-duration: 441ms;
+}
+
+.voice-input-animator-bar:nth-child(8) {
+  left: 99px;
+  animation-duration: 419ms;
+}
+
+.voice-input-animator-bar:nth-child(9) {
+  left: 113px;
+  animation-duration: 487ms;
+}
+
+.voice-input-animator-bar:nth-child(10) {
+  left: 127px;
+  animation-duration: 442ms;
+}

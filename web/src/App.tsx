@@ -1,6 +1,5 @@
 
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import User from './sso/User';
 import AppContext from './AppContext';
 import { AppInfo } from './types/app';
@@ -11,12 +10,14 @@ import DingTalk from './sso/DingTalk';
 
 const App = () => {
 
-  let { appCode } = useParams();
-  
   const [user, setUser] = useState<User>(User.Guest);
   const [appInfo, setAppInfo] = useState<AppInfo>()
 
   useEffect(() => {
+
+    const queryParams = new URLSearchParams(document.location.search);
+    const appCode = queryParams.get('appCode');
+
     if (appCode) {
       (async () => {
         try {
@@ -42,7 +43,7 @@ const App = () => {
   }, []);
 
   return (
-    <AppContext.Provider value={{ user, setUser, appInfo, setAppInfo}}>
+    <AppContext.Provider value={{ user, setUser, appInfo, setAppInfo }}>
       <DingTalk />
     </AppContext.Provider >
   );

@@ -59,36 +59,21 @@ const Markdown = ({ ...props }) => {
                 <div>
                   <div className='markdown-code-header'>
                     <div className='text-[13px] text-gray-500 font-normal'>{languageShowName}</div>
-                    <div style={{ display: 'flex' }}>
-                      {language === 'mermaid'
-                        && <SVGBtn
-                          isSVG={isSVG}
-                          setIsSVG={setIsSVG}
-                        />
-                      }
-                      {/* <CopyBtn
-                        className='mr-1'
-                        value={String(children).replace(/\n$/, '')}
-                        isPlain
-                      /> */}
-                    </div>
                   </div>
-                  {(language === 'mermaid' && isSVG)
-                    ? (<Flowchart PrimitiveCode={String(children).replace(/\n$/, '')} />)
-                    : (<SyntaxHighlighter
-                      {...props}
-                      style={{...atelierSeasideLight}}
-                      customStyle={{
-                        paddingLeft: 12,
-                        backgroundColor: '#fff',
-                        borderRadius: 4
-                      }}
-                      language={match[1]}
-                      showLineNumbers
-                      PreTag="div"
-                    >
-                      {String(children).replace(/\n$/, '')}
-                    </SyntaxHighlighter>)}
+                  <SyntaxHighlighter
+                    {...props}
+                    style={{ ...atelierSeasideLight }}
+                    customStyle={{
+                      paddingLeft: 12,
+                      backgroundColor: '#fff',
+                      borderRadius: 4
+                    }}
+                    language={match[1]}
+                    showLineNumbers
+                    PreTag="div"
+                  >
+                    {String(children).replace(/\n$/, '')}
+                  </SyntaxHighlighter>
                 </div>
               )
               : (
@@ -132,9 +117,7 @@ const Markdown = ({ ...props }) => {
             return <p>{paragraph.children}</p>
           },
         }}
-        linkTarget='_blank'
-      >
-        {/* Markdown detect has problem. */}
+        linkTarget='_blank'>
         {props.content}
       </ReactMarkdown>
     </div>

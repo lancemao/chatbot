@@ -29,6 +29,7 @@
   flex-direction: column;
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .conversation-content-container {
@@ -92,7 +93,7 @@
   flex: 1;
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: end;
   border: 1px solid lightgray;
   margin: 0 16px 16px 16px;
   border-radius: 6px;
@@ -121,6 +122,7 @@
   justify-content: center;
   font-size: 16px;
   user-select: none;
+  min-height: 44px;
 }
 
 .chat-input-voice {
@@ -141,11 +143,12 @@
   resize: none;
   border: none;
   flex: 1;
-  padding: 0px 12px;
+  padding: 2px 12px;
   font-size: 14px;
   line-height: 20px;
   color: rgb(55 65 81);
-  font-family: HarmonyOSHans-Light, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  margin-bottom: 10px;
 }
 
 .chat-input-send-button-container {

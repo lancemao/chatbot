@@ -218,15 +218,14 @@ const ssePost = (
           onError?.(moreInfo.errorMessage, moreInfo.errorCode)
           if (moreInfo.errorMessage !== 'AbortError: The user aborted a request.')
             // Toast.notify({ type: 'error', message: moreInfo.errorMessage })
-          return
+            return
         }
         onData?.(str, isFirstMessage, moreInfo)
       }, onCompleted, onThought, onMessageEnd, onMessageReplace, onFile, onWorkflowStarted, onWorkflowFinished, onNodeStarted, onNodeFinished, onIterationStart, onIterationNext, onIterationFinish, onTextChunk, onTextReplace)
     }).catch((e) => {
-      alert(e)
       if (e.toString() !== 'AbortError: The user aborted a request.')
         // Toast.notify({ type: 'error', message: e })
-      onError?.(e)
+        onError?.(e)
     })
 }
 

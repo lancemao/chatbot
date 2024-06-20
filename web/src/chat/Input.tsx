@@ -1,19 +1,20 @@
-import React, { useContext, useEffect, useRef, useState } from "react"
+import React, { useContext, useEffect, useRef } from "react"
 import Textarea from 'rc-textarea'
 import sendActiveImage from "@/assets/images/send-active.svg";
 import voiceInputImage from "@/assets/images/ic_voice_input.png";
 import keyboardInputImage from "@/assets/images/ic_keyboard.png";
 import VoiceContext from "@/VoiceContext";
+import VoiceInputAnimator from "@/components/VoiceInputAnimator";
 
-const Input = ({ onSend }) => {
+const Input = ({ queryItem, onSend }) => {
 
-  const inputContainerRef = useRef(null)
+  const inputContainerRef = useRef<HTMLDivElement>(null)
 
   const { voicePreferred, onStart, onStop } = useContext(VoiceContext)
 
   const [usingVoice, setUsingVoice] = React.useState(false)
   const [isRecording, setIsRecording] = React.useState(false)
-  const [query, setQuery] = React.useState('')
+  const [query, setQuery] = React.useState(queryItem?.content)
   const [insideVoiceInputContainer, setInsideVoiceInputContainer] = React.useState(false)
 
   const sendStyle = {
@@ -24,7 +25,7 @@ const Input = ({ onSend }) => {
 
   useEffect(() => {
     const handleTouchMove = (event) => {
-      if (event.touches[0]) {
+      if (event.touches[0] && inputContainerRef?.current) {
         let touchY = event.touches[0].clientY
         if (touchY < inputContainerRef?.current?.getBoundingClientRect().top) {
           setInsideVoiceInputContainer(false)
@@ -45,13 +46,34 @@ const Input = ({ onSend }) => {
     setUsingVoice(voicePreferred)
   }, [voicePreferred])
 
+  useEffect(() => {
+    // happens when query is from outside. e.g. double click on question
+    setQuery(queryItem?.content)
+
+    // change input type to text
+    if (queryItem?.content) {
+      setUsingVoice(false)
+    }
+  }, [queryItem])
+
   const onChange = (e) => {
     setQuery(e.target.value)
   }
 
-  const onPressEnter = (e) => {
-    e.preventDefault()
-    send(query)
+  // cannot use onPressEnter event because if user is using Chinese input method 
+  // and when user's typing English then press Enter, onPressEnter will be triggered which is not what we want
+  const onKeyDown = (e) => {
+    if (e.keyCode === 13) {
+      e.preventDefault();
+      send(query)
+    }
+  }
+
+  const onTextInputFocus = () => {
+    // on some mobile phone the scrolHeight is not updated during keyboard animation
+    setTimeout(() => {
+      window.scrollTo(0, document.body.scrollHeight)
+    }, 300)
   }
 
   const onInputSwitcherClick = () => {
@@ -101,17 +123,25 @@ const Input = ({ onSend }) => {
         {
           usingVoice ?
             <div className="chat-input-hold-to-speak-container"
+              onMouseDown={onVoiceButtonDown}
+              onMouseUp={onVoiceButtonUp}
               onTouchStart={onVoiceButtonDown}
               onTouchEnd={onVoiceButtonUp}
               onTouchCancel={onVoiceCancel}>
-              <div>{isRecording ? (insideVoiceInputContainer ? '松开 发送' : '松开 取消') : '按住 说话'}</div>
+              <div>
+                {
+                  isRecording ? <VoiceInputAnimator cancel={!insideVoiceInputContainer} /> : <div>按住 说话</div>
+                }
+              </div>
             </div> :
             <Textarea
+              autoFocus
               value={query}
               className="chat-input"
               autoSize
+              onFocus={onTextInputFocus}
               onChange={onChange}
-              onPressEnter={onPressEnter} />
+              onKeyDown={onKeyDown} />
         }
         <div className="chat-input-send-button-container">
           {!usingVoice && <div className="chat-send-button" style={sendStyle} onClick={() => send(query)}></div>}

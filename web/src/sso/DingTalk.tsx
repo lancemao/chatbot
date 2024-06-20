@@ -1,7 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import Chat from '../chat/Chat';
 import AppContext from '@/AppContext';
-import CryptoJS from 'crypto-js';
 import * as dd from 'dingtalk-jsapi';
 import VoiceContext from '@/VoiceContext';
 
@@ -78,50 +77,40 @@ const DingTalk = () => {
       alert('dd error: ' + JSON.stringify(err));
     })
 
-    let ticket = await getJsTicket()
-
-    let nonce = '1234567890'
-    let timeStamp = Date.now()
-    let url = window.location.href
-    let signature = getJsApiSingnature(ticket, nonce, timeStamp, url)
+    // url needs to be encoded
+    let info = await getJsAPIInfo(encodeURIComponent(window.location.href))
+    let { agentId, timeStamp, nonceStr, signature } = info
     dd.config({
-      agentId: import.meta.env.VITE_DINGTALK_AGENT_ID,
+      agentId,
       corpId,
-      timeStamp: timeStamp,
-      nonceStr: nonce,
-      signature: signature,
+      timeStamp,
+      nonceStr,
+      signature,
       jsApiList: [
         'device.audio.startRecord',
         'device.audio.stopRecord',
         'device.audio.download',
-        'device.audio.playVoice',
         'device.audio.translateVoice'
       ]
     })
   }
 
-  async function getJsTicket() {
+  async function getJsAPIInfo(url: string) {
     try {
-      let res: any = await fetch('/agent/dingtalk/get-js-ticket')
-      let data = await res.json()
-      return data.ticket
+      let res: any = await fetch('/agent/dingtalk/get-js-api-signature?url=' + url)
+      return await res.json()
     } catch (e) {
       console.error(e)
       return e
     }
   }
 
-  function getJsApiSingnature(ticket, nonce, timeStamp, url) {
-    let plainTex = "jsapi_ticket=" + ticket + "&noncestr=" + nonce + "&timestamp=" + timeStamp + "&url=" + url;
-    let signature = CryptoJS.SHA256(plainTex).toString();
-    return signature;
-  }
-
   function onStart() {
     dd.device.audio.startRecord({
       success: () => { },
-      fail: (e) => {
-        alert('startRecord err ' + JSON.stringify(e))
+      fail: () => {
+        // we don't show error here. Most likely error is permission denied 
+        // which is already shown when requesting JS API permission
       },
       complete: () => { },
     })
@@ -132,7 +121,6 @@ const DingTalk = () => {
       dd.device.audio.stopRecord({
         success: (res) => {
           let { mediaId, duration } = res
-          // alert('stopRecord success ' + JSON.stringify(res))
           if (cancel) {
             resolve('')
           } else {
@@ -167,7 +155,7 @@ const DingTalk = () => {
   }
 
   return (
-    <VoiceContext.Provider value={{ voicePreferred: true, onStart, onStop }}>
+    <VoiceContext.Provider value={{ voicePreferred: isInDingTalk, onStart, onStop }}>
       <Chat />
     </VoiceContext.Provider>
   );

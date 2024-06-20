@@ -4,8 +4,8 @@ import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: '/chatx/',
   build: {
-    outDir: 'chatbot',
     target: 'es2015',
     modulePreload: {
       polyfill: false

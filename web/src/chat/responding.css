@@ -61,3 +61,29 @@
 .dot-flashing-text::after {
   left: 7px;
 }
+
+.stop-responding-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px;
+}
+
+.stop-responding-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  border: 1px solid #dee0e3;
+  background-color: rgb(243 244 246);
+  padding: 4px 8px;
+}
+
+.stop-responding-container:hover {
+  cursor: pointer;
+}
+
+.stop-responding-text {
+  margin-left: 4px;
+  font-size: 13px;
+}
