@@ -78,8 +78,8 @@ const DingTalk = () => {
     })
 
     // url needs to be encoded
-    let info = await getJsAPIInfo(encodeURIComponent(window.location.href))
-    let { agentId, timeStamp, nonceStr, signature } = info
+    const info = await getJsAPIInfo(encodeURIComponent(window.location.href))
+    const { agentId, timeStamp, nonceStr, signature } = info
     dd.config({
       agentId,
       corpId,
@@ -97,7 +97,7 @@ const DingTalk = () => {
 
   async function getJsAPIInfo(url: string) {
     try {
-      let res: any = await fetch('/agent/dingtalk/get-js-api-signature?url=' + url)
+      const res = await fetch('/agent/dingtalk/get-js-api-signature?url=' + url)
       return await res.json()
     } catch (e) {
       console.error(e)
@@ -120,7 +120,7 @@ const DingTalk = () => {
     return new Promise((resolve, reject) => {
       dd.device.audio.stopRecord({
         success: (res) => {
-          let { mediaId, duration } = res
+          const { mediaId, duration } = res
           if (cancel) {
             resolve('')
           } else {
@@ -131,8 +131,7 @@ const DingTalk = () => {
                   mediaId,
                   duration,
                   success: (res) => {
-                    let text = res.content
-                    resolve(text)
+                    resolve(res.content)
                   },
                   fail: (e) => {
                     reject('translateVoice err ' + JSON.stringify(e))

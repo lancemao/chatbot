@@ -19,41 +19,12 @@ export type IOnDataMoreInfo = {
 }
 
 export type IOnData = (message: string, isFirstMessage: boolean, moreInfo: IOnDataMoreInfo) => void
-export type IOnThought = (though: ThoughtItem) => void
-export type IOnFile = (file: VisionFile) => void
-export type IOnMessageEnd = (messageEnd: MessageEnd) => void
-export type IOnMessageReplace = (messageReplace: MessageReplace) => void
-export type IOnAnnotationReply = (messageReplace: AnnotationReply) => void
 export type IOnCompleted = (hasError?: boolean, errorMessage?: string) => void
-export type IOnError = (msg: string, code?: string) => void
-
-export type IOnWorkflowStarted = (workflowStarted: WorkflowStartedResponse) => void
-export type IOnWorkflowFinished = (workflowFinished: WorkflowFinishedResponse) => void
-export type IOnNodeStarted = (nodeStarted: NodeStartedResponse) => void
-export type IOnNodeFinished = (nodeFinished: NodeFinishedResponse) => void
-export type IOnIterationStarted = (workflowStarted: IterationStartedResponse) => void
-export type IOnIterationNexted = (workflowStarted: IterationNextedResponse) => void
-export type IOnIterationFinished = (workflowFinished: IterationFinishedResponse) => void
-export type IOnTextChunk = (textChunk: TextChunkResponse) => void
-export type IOnTextReplace = (textReplace: TextReplaceResponse) => void
 
 const handleStream = (
   response: Response,
   onData: IOnData,
   onCompleted?: IOnCompleted,
-  onThought?: IOnThought,
-  onMessageEnd?: IOnMessageEnd,
-  onMessageReplace?: IOnMessageReplace,
-  onFile?: IOnFile,
-  onWorkflowStarted?: IOnWorkflowStarted,
-  onWorkflowFinished?: IOnWorkflowFinished,
-  onNodeStarted?: IOnNodeStarted,
-  onNodeFinished?: IOnNodeFinished,
-  onIterationStart?: IOnIterationStarted,
-  onIterationNext?: IOnIterationNexted,
-  onIterationFinish?: IOnIterationFinished,
-  onTextChunk?: IOnTextChunk,
-  onTextReplace?: IOnTextReplace,
 ) => {
   if (!response.ok)
     throw new Error('Network response was not ok')
@@ -106,45 +77,6 @@ const handleStream = (
               })
               isFirstMessage = false
             }
-            else if (bufferObj.event === 'agent_thought') {
-              onThought?.(bufferObj as ThoughtItem)
-            }
-            else if (bufferObj.event === 'message_file') {
-              onFile?.(bufferObj as VisionFile)
-            }
-            else if (bufferObj.event === 'message_end') {
-              onMessageEnd?.(bufferObj as MessageEnd)
-            }
-            else if (bufferObj.event === 'message_replace') {
-              onMessageReplace?.(bufferObj as MessageReplace)
-            }
-            else if (bufferObj.event === 'workflow_started') {
-              onWorkflowStarted?.(bufferObj as WorkflowStartedResponse)
-            }
-            else if (bufferObj.event === 'workflow_finished') {
-              onWorkflowFinished?.(bufferObj as WorkflowFinishedResponse)
-            }
-            else if (bufferObj.event === 'node_started') {
-              onNodeStarted?.(bufferObj as NodeStartedResponse)
-            }
-            else if (bufferObj.event === 'node_finished') {
-              onNodeFinished?.(bufferObj as NodeFinishedResponse)
-            }
-            else if (bufferObj.event === 'iteration_started') {
-              onIterationStart?.(bufferObj as IterationStartedResponse)
-            }
-            else if (bufferObj.event === 'iteration_next') {
-              onIterationNext?.(bufferObj as IterationNextedResponse)
-            }
-            else if (bufferObj.event === 'iteration_completed') {
-              onIterationFinish?.(bufferObj as IterationFinishedResponse)
-            }
-            else if (bufferObj.event === 'text_chunk') {
-              onTextChunk?.(bufferObj as TextChunkResponse)
-            }
-            else if (bufferObj.event === 'text_replace') {
-              onTextReplace?.(bufferObj as TextReplaceResponse)
-            }
           }
         })
         buffer = lines[lines.length - 1]
@@ -173,19 +105,6 @@ const ssePost = (
   {
     onData,
     onCompleted,
-    onThought,
-    onFile,
-    onMessageEnd,
-    onMessageReplace,
-    onWorkflowStarted,
-    onWorkflowFinished,
-    onNodeStarted,
-    onNodeFinished,
-    onIterationStart,
-    onIterationNext,
-    onIterationFinish,
-    onTextChunk,
-    onTextReplace,
     onError,
     getAbortController,
   },
@@ -221,7 +140,7 @@ const ssePost = (
             return
         }
         onData?.(str, isFirstMessage, moreInfo)
-      }, onCompleted, onThought, onMessageEnd, onMessageReplace, onFile, onWorkflowStarted, onWorkflowFinished, onNodeStarted, onNodeFinished, onIterationStart, onIterationNext, onIterationFinish, onTextChunk, onTextReplace)
+      }, onCompleted)
     }).catch((e) => {
       if (e.toString() !== 'AbortError: The user aborted a request.')
         // Toast.notify({ type: 'error', message: e })

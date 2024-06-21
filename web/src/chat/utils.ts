@@ -11,7 +11,7 @@ export const checkOrSetAccessToken = async (appCode: string) => {
     accessTokenJson = JSON.parse(accessToken)
   }
   catch (e) {
-
+    console.error(e)
   }
   if (!accessTokenJson[sharedToken]) {
     const res = await fetchAccessToken(sharedToken)
@@ -29,7 +29,7 @@ export function getAccessToken(appCode: string): string {
   try {
     accessTokenJson = JSON.parse(accessToken)
   } catch (e) {
-
+    console.error(e)
   }
   return accessTokenJson[sharedToken]
 }
@@ -41,7 +41,7 @@ export const setAccessToken = async (sharedToken: string, token: string) => {
     accessTokenJson = JSON.parse(accessToken)
   }
   catch (e) {
-
+    console.error(e)
   }
 
   localStorage.removeItem(CONVERSATION_ID_INFO)
@@ -59,7 +59,7 @@ export const removeAccessToken = () => {
     accessTokenJson = JSON.parse(accessToken)
   }
   catch (e) {
-
+    console.error(e)
   }
 
   localStorage.removeItem(CONVERSATION_ID_INFO)
@@ -69,7 +69,7 @@ export const removeAccessToken = () => {
 }
 
 export function flatAppInfo(appCode: string, appInfo: any): AppInfo {
-  let res: AppInfo = {
+  const res: AppInfo = {
     code: appCode,
     app_id: appInfo.app_id,
     title: appInfo.site.title,

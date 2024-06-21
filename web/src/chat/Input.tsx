@@ -26,7 +26,7 @@ const Input = ({ queryItem, onSend }) => {
   useEffect(() => {
     const handleTouchMove = (event) => {
       if (event.touches[0] && inputContainerRef?.current) {
-        let touchY = event.touches[0].clientY
+        const touchY = event.touches[0].clientY
         if (touchY < inputContainerRef?.current?.getBoundingClientRect().top) {
           setInsideVoiceInputContainer(false)
         } else {
@@ -60,15 +60,6 @@ const Input = ({ queryItem, onSend }) => {
     setQuery(e.target.value)
   }
 
-  // cannot use onPressEnter event because if user is using Chinese input method 
-  // and when user's typing English then press Enter, onPressEnter will be triggered which is not what we want
-  const onKeyDown = (e) => {
-    if (e.keyCode === 13) {
-      e.preventDefault();
-      send(query)
-    }
-  }
-
   const onTextInputFocus = () => {
     // on some mobile phone the scrolHeight is not updated during keyboard animation
     setTimeout(() => {
@@ -93,7 +84,7 @@ const Input = ({ queryItem, onSend }) => {
   const onVoiceButtonUp = () => {
     if (insideVoiceInputContainer) {
       (async () => {
-        let text = await onStop(false)
+        const text = await onStop(false)
         send(text)
       })()
     } else {
@@ -140,8 +131,7 @@ const Input = ({ queryItem, onSend }) => {
               className="chat-input"
               autoSize
               onFocus={onTextInputFocus}
-              onChange={onChange}
-              onKeyDown={onKeyDown} />
+              onChange={onChange} />
         }
         <div className="chat-input-send-button-container">
           {!usingVoice && <div className="chat-send-button" style={sendStyle} onClick={() => send(query)}></div>}

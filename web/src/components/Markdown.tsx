@@ -1,4 +1,3 @@
-import { useState } from "react"
 import ReactMarkdown from 'react-markdown'
 import 'katex/dist/katex.min.css'
 import RemarkMath from 'remark-math'
@@ -39,8 +38,6 @@ const getCorrectCapitalizationLanguageName = (language: string) => {
 }
 
 const Markdown = ({ ...props }) => {
-
-  const [isSVG, setIsSVG] = useState(false)
 
   return (
     <div className="markdown-body">
@@ -84,7 +81,6 @@ const Markdown = ({ ...props }) => {
           },
           img({ src, alt, ...props }) {
             return (
-              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={src}
                 alt={alt}
@@ -102,7 +98,6 @@ const Markdown = ({ ...props }) => {
 
               return (
                 <>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={image.properties.src}
                     width={250}

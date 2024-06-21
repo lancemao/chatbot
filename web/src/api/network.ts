@@ -3,14 +3,14 @@ import { flatAppInfo, getAccessToken } from '@/chat/utils';
 import type { AppInfo, ConversationContent, ConversationData } from '../types/app';
 
 export async function fetchAccessToken(appCode: string): Promise<{ access_token: string } | null> {
-  let options = {
+  const options = {
     method: 'GET',
     headers: {
       'X-App-Code': appCode
     }
   }
   try {
-    let response = await fetch(`/api/passport`, options);
+    const response = await fetch(`/api/passport`, options);
     if (response.status === 200) {
       return await response.json();
     } else {
@@ -23,17 +23,17 @@ export async function fetchAccessToken(appCode: string): Promise<{ access_token:
 }
 
 export async function getAppInfo(appCode: string): Promise<AppInfo> {
-  let data = await request<any>(`/api/site`, 'GET', appCode);
+  const data = await request<any>(`/api/site`, 'GET', appCode);
   return flatAppInfo(appCode, data);
 }
 
 export async function getConversations(appCode: string): Promise<[ConversationData]> {
-  let data = await request<any>(`/api/conversations`, 'GET', appCode);
+  const data = await request<any>(`/api/conversations`, 'GET', appCode);
   return data.data;
 }
 
 export async function getConversationContent(conversationId: string, appCode: string): Promise<[ConversationContent]> {
-  let data = await request<any>(`/api/messages?conversation_id=${conversationId}`, 'GET', appCode);
+  const data = await request<any>(`/api/messages?conversation_id=${conversationId}`, 'GET', appCode);
   return data.data;
 }
 
@@ -43,7 +43,7 @@ async function request<T>(
   appCode: string
 ): Promise<T>  {
   const accessToken = getAccessToken(appCode)
-  let options = {
+  const options = {
     method: method,
     headers: {
       'Content-Type': 'application/json',
@@ -52,9 +52,9 @@ async function request<T>(
   }
 
   try {
-    let response = await fetch(url, options);
+    const response = await fetch(url, options);
     if (response.status === 200) {
-      let result = await response.json();
+      const result = await response.json();
       return result
     } else {
       return await response.json();

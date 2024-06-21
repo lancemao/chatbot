@@ -30,7 +30,7 @@ const App = () => {
           // we first get its public info, and then handle user login.
           // for example, in app's public info, it might require user to login using some specific id provider
           // our front end code can then handle user login accordingly.
-          let info: AppInfo = await getAppInfo(appCode);
+          const info: AppInfo = await getAppInfo(appCode);
           setAppInfo(info);
 
           // not working in some env e.g. dingtalk, instead we should use js-api provided by those platforms.

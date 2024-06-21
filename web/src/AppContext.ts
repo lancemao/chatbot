@@ -9,9 +9,4 @@ type AppContent = {
   setAppInfo: (appInfo: AppInfo) => void;
 }
 
-export default createContext<AppContent>({
-  user: User.Guest,
-  setUser: (user: User) => { },
-  appInfo: undefined,
-  setAppInfo: (appInfo) => { },
-});
+export default createContext<AppContent | null>(null);

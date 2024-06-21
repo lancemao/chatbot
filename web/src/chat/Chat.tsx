@@ -29,15 +29,15 @@ const Chat = () => {
     if (appInfo) {
       (async () => {
         try {
-          let conversations: ConversationData[] = await getConversations(appInfo.code);
-          let curConversation = getCurrentConversation(conversations);
+          const conversations: ConversationData[] = await getConversations(appInfo.code);
+          const curConversation = getCurrentConversation(conversations);
           if (curConversation) {
             setCurrentConversation?.(curConversation);
-            let conversationContent = await getConversationContent(curConversation.id, appInfo.code);
+            const conversationContent = await getConversationContent(curConversation.id, appInfo.code);
 
             // backend returns an array of messages, each message contains both query and answer.
             // we need to separate them and display them in a list.
-            let list: ConversationItem[] = [];
+            const list: ConversationItem[] = [];
             conversationContent.forEach(item => {
               list.push({ id: item.id, type: 'Q', content: item.query });
               list.push({ id: item.id, type: 'A', content: item.answer });
@@ -68,7 +68,7 @@ const Chat = () => {
       setResponding(true);
 
       // temperary local id for query item. backend is not aware of it
-      let random = Math.random().toString(36).substring(7);
+      const random = Math.random().toString(36).substring(7);
       setContentList(preContentList => [...preContentList, { id: random, type: 'Q', content: query }]);
 
       // when user starts the very first conversation, the currentConversation is null
@@ -82,7 +82,7 @@ const Chat = () => {
     console.log('onData', message, isFirstMessage, moreInfo)
     setCurrentConversationId(moreInfo.conversationId)
     setContentList(preContentList => {
-      let existingMessage = preContentList.find(item => item.id === moreInfo.messageId);
+      const existingMessage = preContentList.find(item => item.id === moreInfo.messageId);
       if (existingMessage) {
         existingMessage.content += message;
         return [...preContentList];
@@ -94,6 +94,9 @@ const Chat = () => {
 
   const onCompleted: IOnCompleted = (hasError?: boolean, errorMessage?: string) => {
     setResponding(false);
+    if (hasError) {
+      console.error(errorMessage)
+    }
   }
 
   const getAbortController = (controller: AbortController) => {

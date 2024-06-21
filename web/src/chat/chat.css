@@ -93,7 +93,7 @@
   flex: 1;
   display: flex;
   flex-direction: row;
-  align-items: end;
+  align-items: flex-end;
   border: 1px solid lightgray;
   margin: 0 16px 16px 16px;
   border-radius: 6px;
