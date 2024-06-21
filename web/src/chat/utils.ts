@@ -1,4 +1,5 @@
 import { fetchAccessToken } from "@/api/network"
+import { UOMeta, UOType } from "@/components/user-option-ui/type"
 import type { AppInfo, ConversationData } from "@/types/app"
 
 const CONVERSATION_ID_INFO = 'conversationIdInfo'
@@ -68,7 +69,7 @@ export const removeAccessToken = () => {
   localStorage.setItem('token', JSON.stringify(accessTokenJson))
 }
 
-export function flatAppInfo(appCode: string, appInfo: any): AppInfo {
+export function flatAppInfo(appCode: string, appInfo: any, parameters): AppInfo {
   const res: AppInfo = {
     code: appCode,
     app_id: appInfo.app_id,
@@ -77,6 +78,8 @@ export function flatAppInfo(appCode: string, appInfo: any): AppInfo {
     description: appInfo.site.description,
     default_language: appInfo.site.default_language,
     custom_disclaimer: appInfo.site.custom_disclaimer,
+    opening_statement: parameters.opening_statement,
+    suggested_questions: parameters.suggested_questions,
   }
   return res;
 }
@@ -96,4 +99,11 @@ export function setCurrentConversationId(conversationId: string | undefined) {
 
 export function restartConversation() {
   localStorage.removeItem('current_conversation');
+}
+
+export function generateOpeningStatementMeta(statements: string[]): UOMeta[] {
+  return statements.map((statement) => ({
+    type: UOType.Button,
+    text: statement,
+  }));
 }

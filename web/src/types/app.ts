@@ -1,3 +1,5 @@
+import { UOMeta } from "@/components/user-option-ui/type"
+
 export type AppInfo = {
   // from url
   code: string
@@ -18,6 +20,10 @@ export type AppInfo = {
   copyright?: string
   privacy_policy?: string
   custom_disclaimer?: string
+
+  // in parameter
+  opening_statement: string
+  suggested_questions: string[]
 }
 
 export type ConversationData = {
@@ -39,4 +45,5 @@ export type ConversationItem = {
   id: string, // message id
   type: 'Q' | 'A',
   content: string,
+  meta?: UOMeta[]
 }

@@ -2,7 +2,8 @@ import ReactDOM from 'react-dom/client';
 
 import App from './App';
 
-import "./index.css";
+import "./styles/index.css";
+import "./styles/markdown.scss";
 
 const rootEle = document.getElementById('root');
 

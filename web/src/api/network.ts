@@ -23,8 +23,9 @@ export async function fetchAccessToken(appCode: string): Promise<{ access_token:
 }
 
 export async function getAppInfo(appCode: string): Promise<AppInfo> {
-  const data = await request<any>(`/api/site`, 'GET', appCode);
-  return flatAppInfo(appCode, data);
+  const site = await request<any>(`/api/site`, 'GET', appCode);
+  const parameters = await request<any>(`/api/parameters`, 'GET', appCode);
+  return flatAppInfo(appCode, site, parameters);
 }
 
 export async function getConversations(appCode: string): Promise<[ConversationData]> {

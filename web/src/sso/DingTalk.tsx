@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import Chat from '../chat/Chat';
 import AppContext from '@/AppContext';
 import * as dd from 'dingtalk-jsapi';
-import VoiceContext from '@/VoiceContext';
+import VoiceContext, { VoiceState } from '@/VoiceContext';
 
 const DingTalk = () => {
   const tip = 'Please open in DingTalk'
@@ -12,6 +12,7 @@ const DingTalk = () => {
 
   const { user, setUser, appInfo } = useContext(AppContext)
   const [isInDingTalk, setIsInDingTalk] = useState<boolean>(false)
+  const [voiceState, setVoiceState] = useState<VoiceState>(VoiceState.PREPARING)
 
   useEffect(() => {
     setIsInDingTalk(dd.env.platform !== 'notInDingTalk')
@@ -41,6 +42,7 @@ const DingTalk = () => {
       })
     } else {
       console.error(tip)
+      setVoiceState(VoiceState.NA)
     }
   }, [isInDingTalk])
 
@@ -74,7 +76,8 @@ const DingTalk = () => {
   async function grantJsPermission() {
 
     dd.error(function (err) {
-      alert('dd error: ' + JSON.stringify(err));
+      console.error(err)
+      setVoiceState(VoiceState.NA)
     })
 
     // url needs to be encoded
@@ -93,6 +96,8 @@ const DingTalk = () => {
         'device.audio.translateVoice'
       ]
     })
+
+    setVoiceState(VoiceState.READY)
   }
 
   async function getJsAPIInfo(url: string) {
@@ -154,7 +159,7 @@ const DingTalk = () => {
   }
 
   return (
-    <VoiceContext.Provider value={{ voicePreferred: isInDingTalk, onStart, onStop }}>
+    <VoiceContext.Provider value={{ voiceState, onStart, onStop }}>
       <Chat />
     </VoiceContext.Provider>
   );

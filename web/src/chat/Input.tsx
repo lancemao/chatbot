@@ -1,16 +1,17 @@
 import React, { useContext, useEffect, useRef } from "react"
 import Textarea from 'rc-textarea'
+import './input.css'
 import sendActiveImage from "@/assets/images/send-active.svg";
 import voiceInputImage from "@/assets/images/ic_voice_input.png";
 import keyboardInputImage from "@/assets/images/ic_keyboard.png";
-import VoiceContext from "@/VoiceContext";
+import VoiceContext, { VoiceState } from "@/VoiceContext";
 import VoiceInputAnimator from "@/components/VoiceInputAnimator";
 
 const Input = ({ queryItem, onSend }) => {
 
   const inputContainerRef = useRef<HTMLDivElement>(null)
 
-  const { voicePreferred, onStart, onStop } = useContext(VoiceContext)
+  const { voiceState, onStart, onStop } = useContext(VoiceContext)
 
   const [usingVoice, setUsingVoice] = React.useState(false)
   const [isRecording, setIsRecording] = React.useState(false)
@@ -43,8 +44,8 @@ const Input = ({ queryItem, onSend }) => {
   }, []);
 
   useEffect(() => {
-    setUsingVoice(voicePreferred)
-  }, [voicePreferred])
+    setUsingVoice(voiceState !== VoiceState.NA)
+  }, [voiceState])
 
   useEffect(() => {
     // happens when query is from outside. e.g. double click on question
@@ -76,12 +77,16 @@ const Input = ({ queryItem, onSend }) => {
   }
 
   const onVoiceButtonDown = () => {
+    if (voiceState !== VoiceState.READY) return
+
     onStart()
     setInsideVoiceInputContainer(true)
     setIsRecording(true)
   }
 
   const onVoiceButtonUp = () => {
+    if (voiceState !== VoiceState.READY) return
+
     if (insideVoiceInputContainer) {
       (async () => {
         const text = await onStop(false)
@@ -108,12 +113,15 @@ const Input = ({ queryItem, onSend }) => {
   return (
     <div className='chat-input-area'>
       <div className='chat-input-container' ref={inputContainerRef}>
-        <div className="chat-input-switch-button" onClick={onInputSwitcherClick}>
-          <img className="chat-input-switch-button-image" src={usingVoice ? keyboardInputImage : voiceInputImage} />
-        </div>
+        {
+          voiceState !== VoiceState.NA &&
+          <div className="chat-input-switch-button" onClick={onInputSwitcherClick}>
+            <img className="chat-input-switch-button-image" src={usingVoice ? keyboardInputImage : voiceInputImage} />
+          </div>
+        }
         {
           usingVoice ?
-            <div className="chat-input-hold-to-speak-container"
+            <div className={`chat-input-hold-to-speak-container ${voiceState === VoiceState.READY && 'chat-input-hold-to-speak-container-ready'}`}
               onMouseDown={onVoiceButtonDown}
               onMouseUp={onVoiceButtonUp}
               onTouchStart={onVoiceButtonDown}

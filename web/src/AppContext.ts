@@ -9,4 +9,9 @@ type AppContent = {
   setAppInfo: (appInfo: AppInfo) => void;
 }
 
-export default createContext<AppContent | null>(null);
+export default createContext<AppContent>({
+  user: User.Guest,
+  setUser: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+  appInfo: undefined,
+  setAppInfo: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+});

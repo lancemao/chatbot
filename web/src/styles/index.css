@@ -2,6 +2,8 @@
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   font-size: 0.875rem; /* 14px */
   line-height: 1.25rem; /* 20px */
+
+  --primary-color: #3166EA;
 }
 
 body {

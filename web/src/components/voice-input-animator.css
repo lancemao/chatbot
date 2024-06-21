@@ -6,7 +6,7 @@
 }
 
 .voice-input-animator-bar {
-  background: #3166EA;
+  background: var(--primary-color);
   bottom: 1px;
   height: 3px;
   width: 6px;

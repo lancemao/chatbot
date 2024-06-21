@@ -1,13 +1,19 @@
 import { createContext } from "react";
 
+export enum VoiceState {
+  NA = 'na', // not available
+  PREPARING = 'preparing',
+  READY = 'ready'
+}
+
 type VoiceSetup = {
-  voicePreferred: boolean; // e.g. in dingtalk mobile app, we encourage user to use voice
+  voiceState: VoiceState;
   onStart: () => void;
   onStop: (cancel: boolean) => Promise<string>;
 }
 
 export default createContext<VoiceSetup>({
-  voicePreferred: false,
+  voiceState: VoiceState.NA,
   onStart: () => {},
   onStop: () => Promise.resolve('')
 });

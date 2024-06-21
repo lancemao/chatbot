@@ -1,6 +1,5 @@
 import React, { useContext } from "react"
 
-import './chat.css'
 import { ConversationItem } from "@/types/app"
 
 import img_user from '@/assets/images/user_profile.svg';

@@ -1,7 +1,9 @@
 import React, { useContext, useEffect, useState } from "react"
 
+import "./chat.css"
+
 import Header from "./Header"
-import { getCurrentConversation, restartConversation, setCurrentConversationId } from "./utils";
+import { generateOpeningStatementMeta, getCurrentConversation, restartConversation, setCurrentConversationId } from "./utils";
 import { getConversationContent, getConversations } from "@/api/network";
 import { ConversationData, ConversationItem } from "@/types/app";
 import Input from "./Input";
@@ -29,6 +31,8 @@ const Chat = () => {
     if (appInfo) {
       (async () => {
         try {
+          const list: ConversationItem[] = initConversationList();
+
           const conversations: ConversationData[] = await getConversations(appInfo.code);
           const curConversation = getCurrentConversation(conversations);
           if (curConversation) {
@@ -37,14 +41,14 @@ const Chat = () => {
 
             // backend returns an array of messages, each message contains both query and answer.
             // we need to separate them and display them in a list.
-            const list: ConversationItem[] = [];
             conversationContent.forEach(item => {
               list.push({ id: item.id, type: 'Q', content: item.query });
               list.push({ id: item.id, type: 'A', content: item.answer });
             });
-
-            setContentList(list);
           }
+
+          setContentList(list);
+
         } catch (err) {
           console.error('Error initializing conversation', err);
         }
@@ -58,8 +62,18 @@ const Chat = () => {
 
   const onRestart = () => {
     restartConversation();
-    setContentList([]);
+    setContentList(initConversationList());
     setCurrentConversation(undefined);
+  }
+
+  function initConversationList(): ConversationItem[] {
+    const list: ConversationItem[] = [];
+    if (appInfo?.opening_statement) {
+      // if there is an opening statement, we will add it to the list as the first item.
+      const userOptionMeta = generateOpeningStatementMeta(appInfo.suggested_questions)
+      list.push({ id: '0', type: 'A', content: appInfo.opening_statement, meta: userOptionMeta });
+    }
+    return list
   }
 
   const onSend = async (query: string) => {
@@ -79,7 +93,7 @@ const Chat = () => {
   }
 
   const onData: IOnData = (message: string, isFirstMessage: boolean, moreInfo: IOnDataMoreInfo) => {
-    console.log('onData', message, isFirstMessage, moreInfo)
+    // console.log('onData', message, isFirstMessage, moreInfo)
     setCurrentConversationId(moreInfo.conversationId)
     setContentList(preContentList => {
       const existingMessage = preContentList.find(item => item.id === moreInfo.messageId);
@@ -112,6 +126,10 @@ const Chat = () => {
     setQueryItem({ ...item })
   }
 
+  const onUserOption = (option: string) => {
+    onSend(option)
+  }
+
   return (
     <div className="chat-root">
       <Header title={appInfo?.title} onRestart={onRestart}></Header>
@@ -121,7 +139,7 @@ const Chat = () => {
             if (item.type === 'Q') {
               return <Question key={index} item={item} onDoubleClick={() => onQuestionDoubleClick(item)} />
             } else if (item.type === 'A') {
-              return <Answer key={index} content={item.content} />
+              return <Answer key={index} item={item} onUserOption={onUserOption} />
             }
           })
         }
