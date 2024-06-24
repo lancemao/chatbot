@@ -1,0 +1,6 @@
+Flask~=3.0.1
+Flask-RESTful==0.3.10
+python-dotenv==1.0.0
+requests~=2.32.2
+PyJWT~=2.8.0
+Werkzeug~=3.0.3
