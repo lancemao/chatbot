@@ -35,6 +35,10 @@ make sure you have *gunicorn* installed on your VM
 Our service listens on port 5002, so if you are using nginx, you need to set:
 
 ```shell
+location /api {
+    proxy_pass <your self hosted dify address>;
+}
+        
 location /agent {
     proxy_pass http://127.0.0.1:5002;
 }
