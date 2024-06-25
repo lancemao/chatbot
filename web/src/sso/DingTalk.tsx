@@ -3,6 +3,7 @@ import Chat from '../chat/Chat';
 import AppContext from '@/AppContext';
 import * as dd from 'dingtalk-jsapi';
 import VoiceContext, { VoiceState } from '@/VoiceContext';
+import MarkdownContext from '@/MarkdownContext';
 
 const DingTalk = () => {
   const tip = 'Please open in DingTalk'
@@ -90,6 +91,7 @@ const DingTalk = () => {
       nonceStr,
       signature,
       jsApiList: [
+        'biz.chat.openSingleChat',
         'device.audio.startRecord',
         'device.audio.stopRecord',
         'device.audio.download',
@@ -158,10 +160,33 @@ const DingTalk = () => {
     })
   }
 
+  const onLinkClick = (e, url: string) => {
+    if (url?.startsWith('http://dingtalk.ai') && corpId) {
+      e.preventDefault()
+      const urlObj = new URL(url)
+      const path = urlObj.pathname
+      if (path === '/chat') {
+        const searchParams = new URLSearchParams(urlObj.search)
+        // const searchParams = new URLSearchParams(url.substring(url.indexOf('?') + 1));
+        const userId = searchParams.get('userId') || '';
+        dd.openChatByUserId({
+          userId,
+          corpId,
+          success: () => { },
+          fail: err => {
+            alert(JSON.stringify(err))
+          }
+        })
+      }
+    }
+  }
+
   return (
     <VoiceContext.Provider value={{ voiceState, onStart, onStop }}>
-      <Chat />
-    </VoiceContext.Provider>
+      <MarkdownContext.Provider value={{ onLinkClick }} >
+        <Chat />
+      </MarkdownContext.Provider>
+    </VoiceContext.Provider >
   );
 }
 

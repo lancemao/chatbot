@@ -127,11 +127,9 @@ const Input = ({ queryItem, onSend }) => {
               onTouchStart={onVoiceButtonDown}
               onTouchEnd={onVoiceButtonUp}
               onTouchCancel={onVoiceCancel}>
-              <div>
-                {
-                  isRecording ? <VoiceInputAnimator cancel={!insideVoiceInputContainer} /> : <div>按住 说话</div>
-                }
-              </div>
+              {
+                isRecording ? <VoiceInputAnimator cancel={!insideVoiceInputContainer} /> : <div style={{ pointerEvents: 'none' }}>按住 说话</div>
+              }
             </div> :
             <Textarea
               autoFocus

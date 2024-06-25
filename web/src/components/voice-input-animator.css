@@ -2,10 +2,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  /*     background: black; */
+  pointer-events: none;
 }
 
 .voice-input-animator-bar {
+  pointer-events: none;
   background: var(--primary-color);
   bottom: 1px;
   height: 3px;
@@ -16,6 +17,7 @@
 }
 
 .voice-input-animator-bar-cancel {
+  pointer-events: none;
   background: #FF5733;
 }
 
