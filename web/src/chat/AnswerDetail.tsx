@@ -21,10 +21,6 @@ const AnswerDetail = () => {
                 <div className="ad-workflow-item" key={index}>
                   <img className="ad-workflow-item-status-icon" src={node.finish.data.status === 'failed' ? img_alert_circle : img_check_circle} />
                   <div className="ad-workflow-item-title">{node.start.data.title}</div>
-                  <div className="ad-workflow-item-content">
-                    {
-                    }
-                  </div>
                 </div>
               )
             })

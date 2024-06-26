@@ -16,7 +16,7 @@ const Answer = ({ item, onUserOption }: { item: ConversationItem, onUserOption?:
         <img className="chat-icon" src={img_user} />
       </div>
       <div className="qa-content answer-content" onDoubleClick={() => {
-        navigate('/chatx/answer-detail', {state: item});
+        item.workflow && navigate('/chatx/answer-detail', {state: item});
       }}>
         <div className="qa-text answer-text">
           {
