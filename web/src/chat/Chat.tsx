@@ -7,7 +7,7 @@ import { generateOpeningStatementMeta, getCurrentConversation, restartConversati
 import { getConversationContent, getConversations } from "@/api/network";
 import { ConversationData, ConversationItem } from "@/types/app";
 import Input from "./Input";
-import { IOnCompleted, IOnData, IOnDataMoreInfo, sendMessage } from "@/api/sse";
+import { IOnCompleted, IOnData, IOnDataMoreInfo, IOnWorkflowDone, OnCompleteData, WorkFlowResponse, sendMessage } from "@/api/sse";
 import Answer from "./Answer";
 import Question from "./Question";
 import RespondIndicator from "./RespondIndicator";
@@ -88,7 +88,7 @@ const Chat = () => {
       // when user starts the very first conversation, the currentConversation is null
       // by passing '' to backend, it will create a new conversation for us
       const conversationId = currentConversation?.id || '';
-      sendMessage(appInfo?.code, conversationId, query, { onData, onCompleted, getAbortController });
+      sendMessage(appInfo?.code, conversationId, query, { onData, onWorkflowDone, onCompleted, getAbortController });
     }
   }
 
@@ -106,10 +106,35 @@ const Chat = () => {
     });
   }
 
-  const onCompleted: IOnCompleted = (hasError?: boolean, errorMessage?: string) => {
+  const onWorkflowDone: IOnWorkflowDone = (workflow: WorkFlowResponse) => {
+    console.log('onWorkflowDone', workflow)
+    const msgId = workflow.start?.message_id
+    if (msgId) {
+      setContentList(preContentList => {
+        const existingMessage = preContentList.find(item => item.id === msgId);
+        if (existingMessage) {
+          existingMessage.workflow = workflow;
+          return [...preContentList];
+        } else {
+          return [...preContentList, { id: msgId, type: 'A', content: '', workflow: workflow }]
+        }
+      })
+    }
+  }
+
+  const onCompleted: IOnCompleted = (error?: OnCompleteData) => {
     setResponding(false);
-    if (hasError) {
-      console.error(errorMessage)
+    if (error?.message_id) {
+      const msgId = error.message_id;
+      setContentList(preContentList => {
+        const existingMessage = preContentList.find(item => item.id === msgId);
+        if (existingMessage) {
+          existingMessage.content = error.message;
+          return [...preContentList];
+        } else {
+          return [...preContentList, { id: msgId, type: 'A', content: error.message }]
+        }
+      })
     }
   }
 

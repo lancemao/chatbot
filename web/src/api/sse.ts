@@ -18,12 +18,114 @@ export type IOnDataMoreInfo = {
   errorCode?: string
 }
 
+export type OnCompleteData = {
+  code?: string
+  created_at?: number
+  conversation_id?: string
+  event?: string
+  message: string
+  message_id?: string
+  status?: number
+}
+
+export type WorkflowStartedResponse = {
+  task_id: string
+  message_id: string
+  workflow_run_id: string
+  event: string
+  data: {
+    id: string
+    workflow_id: string
+    sequence_number: number
+    created_at: number
+  }
+}
+
+export type WorkflowFinishedResponse = {
+  task_id: string
+  workflow_run_id: string
+  event: string
+  data: {
+    id: string
+    workflow_id: string
+    status: string
+    outputs: any
+    error: string
+    elapsed_time: number
+    total_tokens: number
+    total_steps: number
+    created_at: number
+    created_by: {
+      id: string
+      name: string
+      email: string
+    }
+    finished_at: number
+  }
+}
+
+export type NodeStartedResponse = {
+  task_id: string
+  workflow_run_id: string
+  event: string
+  data: {
+    id: string
+    node_id: string
+    node_type: string
+    index: number
+    predecessor_node_id?: string
+    inputs: any
+    created_at: number
+    extras?: any
+  }
+}
+
+export type NodeFinishedResponse = {
+  task_id: string
+  workflow_run_id: string
+  event: string
+  data: {
+    id: string
+    node_id: string
+    node_type: string
+    index: number
+    predecessor_node_id?: string
+    inputs: any
+    process_data: any
+    outputs: any
+    status: string
+    error: string
+    elapsed_time: number
+    execution_metadata: {
+      total_tokens: number
+      total_price: number
+      currency: string
+    }
+    created_at: number
+  }
+}
+
+export type NodeDataResponse = {
+  id: string | undefined
+  start: NodeStartedResponse | undefined
+  finish: NodeFinishedResponse | undefined
+}
+
+export type WorkFlowResponse = {
+  start: WorkflowStartedResponse | undefined
+  finish: WorkflowFinishedResponse | undefined
+  nodes: NodeDataResponse[] | undefined
+}
+
 export type IOnData = (message: string, isFirstMessage: boolean, moreInfo: IOnDataMoreInfo) => void
-export type IOnCompleted = (hasError?: boolean, errorMessage?: string) => void
+export type IOnWorkflowDone = (workFlowResponse: WorkFlowResponse) => void
+export type IOnCompleted = (data?: OnCompleteData) => void
 
 const handleStream = (
   response: Response,
+  workFlowResponse: WorkFlowResponse,
   onData: IOnData,
+  onWorkflowDone?: IOnWorkflowDone,
   onCompleted?: IOnCompleted,
 ) => {
   if (!response.ok)
@@ -65,7 +167,7 @@ const handleStream = (
                 errorCode: bufferObj?.code,
               })
               hasError = true
-              onCompleted?.(true, bufferObj?.message)
+              onCompleted?.(bufferObj as OnCompleteData)
               return
             }
             if (bufferObj.event === 'message' || bufferObj.event === 'agent_message') {
@@ -76,19 +178,31 @@ const handleStream = (
                 messageId: bufferObj.id,
               })
               isFirstMessage = false
+            } else if (bufferObj.event === 'workflow_started') {
+              workFlowResponse.start = bufferObj as WorkflowStartedResponse
+              workFlowResponse.nodes = []
+            } else if (bufferObj.event === 'workflow_finished') {
+              workFlowResponse.finish = bufferObj as WorkflowFinishedResponse
+              onWorkflowDone?.(workFlowResponse)
+            } else if (bufferObj.event === 'node_started') {
+              const nodeStart = bufferObj as NodeStartedResponse
+              const nodeData: NodeDataResponse = { id: nodeStart.data.node_id, start: nodeStart, finish: undefined }
+              workFlowResponse.nodes?.push(nodeData)
+            } else if (bufferObj.event === 'node_finished') {
+              const nodeFinish = bufferObj as NodeFinishedResponse
+              const nodeData = workFlowResponse.nodes?.find(node => node.id === nodeFinish.data.node_id)
+              if (nodeData) {
+                nodeData.finish = nodeFinish
+              }
             }
           }
         })
         buffer = lines[lines.length - 1]
       }
       catch (e) {
-        onData('', false, {
-          conversationId: undefined,
-          messageId: '',
-          errorMessage: `${e}`,
-        })
+        console.error('sse: should not come here', e)
         hasError = true
-        onCompleted?.(true, e as string)
+        onCompleted?.({ message: `${e}` })
         return
       }
       if (!hasError)
@@ -104,6 +218,7 @@ const ssePost = (
   body: any,
   {
     onData,
+    onWorkflowDone,
     onCompleted,
     onError,
     getAbortController,
@@ -123,6 +238,13 @@ const ssePost = (
 
   getAbortController?.(abortController)
 
+  // stores workflow info
+  const workFlowResponse: WorkFlowResponse = {
+    start: undefined,
+    finish: undefined,
+    nodes: undefined
+  }
+
   fetch(url, options as RequestInit)
     .then((res) => {
       if (!/^(2|3)\d{2}$/.test(String(res.status))) {
@@ -132,7 +254,7 @@ const ssePost = (
         onError?.('Server Error')
         return
       }
-      return handleStream(res, (str: string, isFirstMessage: boolean, moreInfo: IOnDataMoreInfo) => {
+      handleStream(res, workFlowResponse, (str: string, isFirstMessage: boolean, moreInfo: IOnDataMoreInfo) => {
         if (moreInfo.errorMessage) {
           onError?.(moreInfo.errorMessage, moreInfo.errorCode)
           if (moreInfo.errorMessage !== 'AbortError: The user aborted a request.')
@@ -140,7 +262,7 @@ const ssePost = (
             return
         }
         onData?.(str, isFirstMessage, moreInfo)
-      }, onCompleted)
+      }, onWorkflowDone, onCompleted)
     }).catch((e) => {
       if (e.toString() !== 'AbortError: The user aborted a request.')
         // Toast.notify({ type: 'error', message: e })

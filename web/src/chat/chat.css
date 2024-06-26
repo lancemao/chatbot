@@ -82,3 +82,7 @@
   background-color: rgb(243 244 246);
   border-radius: 0px 6px 6px 6px;
 }
+
+.answer-text-error {
+  color: #F04438;
+}

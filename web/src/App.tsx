@@ -7,6 +7,8 @@ import { checkOrSetAccessToken } from './chat/utils';
 import { getAppInfo } from './api/network';
 
 import DingTalk from './sso/DingTalk';
+import { Routes, Route } from 'react-router-dom';
+import AnswerDetail from './chat/AnswerDetail';
 
 const App = () => {
 
@@ -44,7 +46,10 @@ const App = () => {
 
   return (
     <AppContext.Provider value={{ user, setUser, appInfo, setAppInfo }}>
-      <DingTalk />
+      <Routes>
+        <Route path="/chatx" element={<DingTalk />} />
+        <Route path="/chatx/answer-detail" element={<AnswerDetail />} />
+      </Routes>
     </AppContext.Provider >
   );
 }

@@ -1,3 +1,4 @@
+import { WorkFlowResponse } from "@/api/sse"
 import { UOMeta } from "@/components/user-option-ui/type"
 
 export type AppInfo = {
@@ -45,5 +46,6 @@ export type ConversationItem = {
   id: string, // message id
   type: 'Q' | 'A',
   content: string,
+  workflow?: WorkFlowResponse,
   meta?: UOMeta[]
 }

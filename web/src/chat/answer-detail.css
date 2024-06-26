@@ -1,0 +1,31 @@
+.ad-workflow-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 12px;
+  background: linear-gradient(rgb(236, 253, 243) 0%, rgb(246, 254, 249) 100%);
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.ad-workflow-title {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.ad-workflow-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+  padding: 8px 6px;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 2px 6px;
+}
+
+.ad-workflow-item-status-icon {
+  width: 12px;
+  height: 12px;
+  margin-right: 6px;
+}
