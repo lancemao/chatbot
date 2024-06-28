@@ -2,7 +2,7 @@ import './voice-input-animator.css'
 
 const VoiceInputAnimator = ({ cancel }) => {
 
-  const arr = Array.from({ length: 10 });
+  const arr = Array.from({ length: 14 });
 
   return (
     <div className="voice-input-animator-bar-container">

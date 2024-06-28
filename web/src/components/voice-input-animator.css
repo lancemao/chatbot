@@ -11,7 +11,7 @@
   bottom: 1px;
   height: 3px;
   width: 6px;
-  margin: 0px 2px;
+  margin: 0px 4px;
   border-radius: 3px;
   animation: sound 0ms -600ms linear infinite alternate;
 }
@@ -81,4 +81,24 @@
 .voice-input-animator-bar:nth-child(10) {
   left: 127px;
   animation-duration: 442ms;
+}
+
+.voice-input-animator-bar:nth-child(11) {
+  left: 141px;
+  animation-duration: 465ms;
+}
+
+.voice-input-animator-bar:nth-child(12) {
+  left: 155px;
+  animation-duration: 401ms;
+}
+
+.voice-input-animator-bar:nth-child(13) {
+  left: 155px;
+  animation-duration: 433ms;
+}
+
+.voice-input-animator-bar:nth-child(14) {
+  left: 169px;
+  animation-duration: 482ms;
 }
