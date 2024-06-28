@@ -78,6 +78,7 @@ const DingTalk = () => {
 
     dd.error(function (err) {
       console.error(err)
+      alert(JSON.stringify(err))
       setVoiceState(VoiceState.NA)
     })
 

@@ -1,3 +1,4 @@
 git pull
-kill $(sudo lsof -i:5002 | grep LISTEN | awk '{print $2}')
-nohup gunicorn --bind 0.0.0.0:5002 app:app &
+pip install -r requirements.txt
+pkill gunicorn
+nohup gunicorn --bind 0.0.0.0:5002 app:app > output.log 2>&1 &
