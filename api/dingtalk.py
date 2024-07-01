@@ -97,6 +97,35 @@ class DDGetUserInfoApi(Resource):
         return Response(res.iter_content(), res.status_code, headers=json_header)
 
 
+class DDGetUserInfoDesApi(Resource):
+    @staticmethod
+    def get():
+        access_token = get_access_token()
+        if access_token is None:
+            return {'errorCode': 400, 'message': 'cannot get access token'}
+
+        try:
+            user_token = request.cookies.get(user_token_key)
+            decoded = PassportService().verify(user_token)
+            user_id = decoded.get('sub')
+            user_detail = get_user_detail(access_token, user_id)
+            # print(user_detail)
+
+            if user_detail is not None:
+                name = f"我的名字是{user_detail['name']}" if user_detail['name'] else ''
+                nickname = f"我的昵称是{user_detail['nickname']}" if user_detail['nickname'] else ''
+                email = f"我的邮箱是{user_detail['email']}" if user_detail['email'] else ''
+                mobile = f"我的手机号码是{user_detail['mobile']}" if user_detail['mobile'] else ''
+                employee_id = f"我的工号是{user_detail['job_number']}，这也是我登录钉钉的账号名" if user_detail['job_number'] else ''
+                des = f"{name}\n{nickname}\n{email}\n{mobile}\n{employee_id}"
+                # print(des)
+                return des
+            else:
+                return jsonify({'message': 'cannot get user info'}), 200
+        except Unauthorized:
+            return jsonify({'message': Unauthorized.args[0]}), 200
+
+
 class DDCreateProcessApi(Resource):
     @staticmethod
     def get(process_id):
@@ -203,5 +232,6 @@ class DDGetApiVersion(Resource):
 
 api.add_resource(DDGetJSTicketApi, '/get-js-api-signature')
 api.add_resource(DDGetUserInfoApi, '/get-user-info')
+api.add_resource(DDGetUserInfoDesApi, '/get-user-info-des')
 api.add_resource(DDCreateProcessApi, '/process/create/<process_id>')
 api.add_resource(DDGetApiVersion, '/version')

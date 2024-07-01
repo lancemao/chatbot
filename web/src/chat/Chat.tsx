@@ -42,8 +42,8 @@ const Chat = () => {
             // backend returns an array of messages, each message contains both query and answer.
             // we need to separate them and display them in a list.
             conversationContent.forEach(item => {
-              list.push({ id: item.id, type: 'Q', content: item.query });
-              list.push({ id: item.id, type: 'A', content: item.answer });
+              list.push({ id: item.id, type: 'Q', content: item.query.trim() });
+              list.push({ id: item.id, type: 'A', content: item.answer.trim() });
             });
           }
 

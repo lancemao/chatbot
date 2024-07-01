@@ -4,6 +4,7 @@ import AppContext from '@/AppContext';
 import * as dd from 'dingtalk-jsapi';
 import VoiceContext, { VoiceState } from '@/VoiceContext';
 import MarkdownContext from '@/MarkdownContext';
+import User from './User';
 
 const DingTalk = () => {
   const tip = 'Please open in DingTalk'
@@ -55,11 +56,18 @@ const DingTalk = () => {
         // alert(JSON.stringify(data));
         // window.localStorage.setItem('_practical_ai_user', data.result.userid)
         if (data.errcode === 0) {
-          user.id = data.result.userid
-          user.username = data.result.name
-          user.avatar = data.result.detail?.avatar
-          user.onIconClick = onIconClick
-          setUser({ ...user }) // must create a new object to change React State
+          const u = new User(data.result.userid)
+          u.username = data.result.name
+          u.email = data.result.detail?.email
+          u.avatar = data.result.detail?.avatar
+          u.nickname = data.result.detail?.nickname
+          u.mobile = data.result.detail?.mobile
+          u.position = data.result.detail?.title
+          u.hiredDate = data.result.detail?.hired_date
+          u.employeeId = data.result.detail?.job_number
+          u.raw = JSON.stringify(data.result.detail)
+          u.onIconClick = onIconClick
+          setUser(u)
         }
       }).catch((err) => {
         alert("获取用户信息失败：" + JSON.stringify(err));

@@ -13,6 +13,8 @@ const Question = ({ item, onDoubleClick }: { item: ConversationItem, onDoubleCli
     user.onIconClick?.()
   }
 
+  const name = user?.nickname ?? user?.username ?? ''
+
   return (
     <div className='conversation-content-container'>
       <div className="chat-icon-container"></div>
@@ -22,7 +24,11 @@ const Question = ({ item, onDoubleClick }: { item: ConversationItem, onDoubleCli
         </div>
       </div>
       <div className="chat-icon-container" onClick={onClick}>
-        <img className="chat-icon" src={user?.avatar ? user.avatar : img_user} />
+        {
+          user?.avatar ? <img className="chat-icon" src={user?.avatar ? user.avatar : img_user} />
+            : name.length > 0 ? <div className="chat-icon-text">{name[0].toLocaleUpperCase()}</div>
+              : <img className="chat-icon" src={img_user} />
+        }
       </div>
     </div>
   )
