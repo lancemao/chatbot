@@ -1,0 +1,53 @@
+.log-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.log-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 12px;
+  background-color: #f2f2f2;
+}
+
+.log-title {
+  font-size: 16px;
+  font-weight: bold;
+  user-select: none;
+}
+
+.log-feedback {
+  font-size: 14px;
+  color: var(--primary-color);
+  cursor: pointer;
+  user-select: none;
+}
+
+.log-item {
+  display: flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid #ccc;
+}
+
+.log-item-error {
+  background-color: #f9ecec
+}
+
+.log-item-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 10px;
+}
+
+.log-item-text {
+  flex: 1;
+  word-break: break-all;
+}
+
+.log-item-text-error {
+  color: #3f1510;
+}

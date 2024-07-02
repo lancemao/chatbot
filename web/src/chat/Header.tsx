@@ -1,7 +1,10 @@
 import React from "react"
 import { ReplayIcon } from "../components/Icon"
+import { useNavigate } from "react-router-dom";
 
 const Header = ({ title, onRestart }) => {
+
+  const navigate = useNavigate();
 
   const restartStyle = {
     paddingRight: '16px',
@@ -19,7 +22,9 @@ const Header = ({ title, onRestart }) => {
 
   return (
     <div className='chat-header'>
-      <div className="chat-header-title">{title}</div>
+      <div className="chat-header-title" onDoubleClick={() => {
+        navigate('/chatx/log');
+      }}>{title}</div>
       <div style={restartStyle} onClick={onClick}>
         <ReplayIcon />
       </div>

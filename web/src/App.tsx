@@ -9,15 +9,22 @@ import { getAppInfo } from './api/network';
 import DingTalk from './sso/DingTalk';
 import { Routes, Route } from 'react-router-dom';
 import AnswerDetail from './chat/AnswerDetail';
+import LogPage from './log/LogPage';
+import { Log } from './log/Log';
 
 const App = () => {
 
-  const [user, setUser] = useState<User>(User.Guest);
+  const [user, setUser] = useState<User>(User.Guest)
   const [appInfo, setAppInfo] = useState<AppInfo>()
+  const [logs, setLogs] = useState<Log[]>([])
+
+  const addLog = (log: Log) => {
+    setLogs((logs: Log[]) => [...logs, log])
+  }
 
   useEffect(() => {
 
-    const queryParams = new URLSearchParams(document.location.search);
+    const queryParams = new URLSearchParams(document.location.search)
     const appCode = queryParams.get('appCode');
 
     if (appCode) {
@@ -37,6 +44,8 @@ const App = () => {
 
           // not working in some env e.g. dingtalk, instead we should use js-api provided by those platforms.
           document.title = info.title;
+
+          addLog(Log.info('App info ' + JSON.stringify(info)))
         } catch (err) {
           console.error('Error initializing chat', err);
         }
@@ -45,10 +54,11 @@ const App = () => {
   }, []);
 
   return (
-    <AppContext.Provider value={{ user, setUser, appInfo, setAppInfo }}>
+    <AppContext.Provider value={{ user, setUser, appInfo, setAppInfo, logs, addLog }}>
       <Routes>
         <Route path="/chatx" element={<DingTalk />} />
         <Route path="/chatx/answer-detail" element={<AnswerDetail />} />
+        <Route path="/chatx/log" element={<LogPage />} />
       </Routes>
     </AppContext.Provider >
   );

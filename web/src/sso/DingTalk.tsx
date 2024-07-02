@@ -5,56 +5,54 @@ import * as dd from 'dingtalk-jsapi';
 import VoiceContext, { VoiceState } from '@/VoiceContext';
 import MarkdownContext from '@/MarkdownContext';
 import User from './User';
+import { Log } from '@/log/Log';
 
 const DingTalk = () => {
-  const tip = 'Please open in DingTalk'
+  const ERR_NOT_IN_DINGTALK = 'Please open in DingTalk'
+  const ERR_NO_CORP_ID = 'corpId not found. Add &corpId=$CORPID$ to the end of your app URL'
 
   const queryParams = new URLSearchParams(document.location.search);
   const corpId = queryParams.get('corpId');
 
-  const { user, setUser, appInfo } = useContext(AppContext)
-  const [isInDingTalk, setIsInDingTalk] = useState<boolean>(false)
+  const { user, setUser, appInfo, addLog } = useContext(AppContext)
   const [voiceState, setVoiceState] = useState<VoiceState>(VoiceState.PREPARING)
 
   useEffect(() => {
-    setIsInDingTalk(dd.env.platform !== 'notInDingTalk')
-    user.onIconClick = onIconClick
-  }, [])
+    if (appInfo) {
+      if (dd.env.platform !== 'notInDingTalk') {
+        dd.setNavigationTitle({ title: appInfo?.title })
+        user.onIconClick = onIconClick
 
-  useEffect(() => {
-    if (appInfo && isInDingTalk) {
-      dd.setNavigationTitle({ title: appInfo?.title })
+        if (corpId) {
+          dd.ready(function () {
+            // request js api permission must be in ready and cannot use await
+            grantJsPermission()
+
+            dd.runtime.permission.requestAuthCode({
+              corpId: corpId
+            }).then((result) => {
+              // addLog(Log.info(result.code))
+              getUserInfo(result.code)
+            }).catch((err) => {
+              addLog(Log.error("获取授权码失败：" + JSON.stringify(err)))
+            })
+          })
+        } else {
+          addLog(Log.error(ERR_NO_CORP_ID))
+          setVoiceState(VoiceState.NA)
+        }
+      } else {
+        addLog(Log.error(ERR_NOT_IN_DINGTALK))
+        setVoiceState(VoiceState.NA)
+      }
     }
   }, [appInfo])
-
-  useEffect(() => {
-    if (isInDingTalk && corpId) {
-      dd.ready(function () {
-        // request js api permission must be in ready and cannot use await
-        grantJsPermission()
-
-        dd.runtime.permission.requestAuthCode({
-          corpId: corpId
-        }).then((result) => {
-          // alert(result.code)
-          getUserInfo(result.code)
-        }).catch((err) => {
-          alert("获取授权码失败：" + JSON.stringify(err));
-        })
-      })
-    } else {
-      console.error(tip)
-      setVoiceState(VoiceState.NA)
-    }
-  }, [isInDingTalk])
 
   function getUserInfo(code: string) {
     fetch('/agent/dingtalk/get-user-info?code=' + code)
       .then((res) => res.json())
       .then((data) => {
-        console.log(JSON.stringify(data))
-        // alert(JSON.stringify(data));
-        // window.localStorage.setItem('_practical_ai_user', data.result.userid)
+        // addLog(Log.info(JSON.stringify(data)))
         if (data.errcode === 0) {
           const u = new User(data.result.userid)
           u.username = data.result.name
@@ -70,23 +68,22 @@ const DingTalk = () => {
           setUser(u)
         }
       }).catch((err) => {
-        alert("获取用户信息失败：" + JSON.stringify(err));
+        addLog(Log.error("获取用户信息失败：" + JSON.stringify(err)))
       })
   }
 
   function onIconClick() {
-    if (isInDingTalk) {
+    if (dd.env.platform !== 'notInDingTalk') {
       window.location.href = 'https://applink.dingtalk.com/page/myProfile'
     } else {
-      console.error(tip)
+      addLog(Log.error(ERR_NOT_IN_DINGTALK))
     }
   }
 
   async function grantJsPermission() {
 
     dd.error(function (err) {
-      console.error(err)
-      alert(JSON.stringify(err))
+      addLog(Log.error("获取js api权限失败：" + JSON.stringify(err)))
       setVoiceState(VoiceState.NA)
     })
 
@@ -101,6 +98,7 @@ const DingTalk = () => {
       signature,
       jsApiList: [
         'biz.chat.openSingleChat',
+        'biz.util.openLink',
         'device.audio.startRecord',
         'device.audio.stopRecord',
         'device.audio.download',
@@ -116,7 +114,7 @@ const DingTalk = () => {
       const res = await fetch('/agent/dingtalk/get-js-api-signature?url=' + url)
       return await res.json()
     } catch (e) {
-      console.error(e)
+      addLog(Log.error(e))
       return e
     }
   }
@@ -124,9 +122,8 @@ const DingTalk = () => {
   function onStart() {
     dd.device.audio.startRecord({
       success: () => { },
-      fail: () => {
-        // we don't show error here. Most likely error is permission denied 
-        // which is already shown when requesting JS API permission
+      fail: (err) => {
+        addLog(Log.error("startRecord err " + JSON.stringify(err)))
       },
       complete: () => { },
     })
@@ -150,11 +147,13 @@ const DingTalk = () => {
                     resolve(res.content)
                   },
                   fail: (e) => {
+                    addLog(Log.error("translateVoice err " + JSON.stringify(e)))
                     reject('translateVoice err ' + JSON.stringify(e))
                   }
                 })
               },
               fail: (e) => {
+                addLog(Log.error("downloadAudio err " + JSON.stringify(e)))
                 reject('downloadAudio err ' + JSON.stringify(e))
               },
               complete: () => { },
@@ -162,6 +161,7 @@ const DingTalk = () => {
           }
         },
         fail: (e) => {
+          addLog(Log.error("stopRecord err " + JSON.stringify(e)))
           reject('stopRecord err ' + JSON.stringify(e))
         },
         complete: () => { },
@@ -176,14 +176,13 @@ const DingTalk = () => {
       const path = urlObj.pathname
       if (path === '/chat') {
         const searchParams = new URLSearchParams(urlObj.search)
-        // const searchParams = new URLSearchParams(url.substring(url.indexOf('?') + 1));
         const userId = searchParams.get('userId') || '';
         dd.openChatByUserId({
           userId,
           corpId,
           success: () => { },
           fail: err => {
-            alert(JSON.stringify(err))
+            addLog(Log.error("openChatByUserId err " + JSON.stringify(err)))
           }
         })
       }
