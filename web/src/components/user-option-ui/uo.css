@@ -1,7 +1,32 @@
+.uo-header-title {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.uo-header-description {
+  font-size: 12px;
+  color: grey;
+  margin: 4px 0;
+}
+
+.uo-content {
+  margin: 10px 0;
+  line-height: 2;
+  border-top: 1px solid #ddd;
+  /* border-bottom: 1px solid #ddd; */
+  padding: 10px 0;
+}
+
+.uo-text {
+  padding: 4px 0;
+  user-select: none;
+  line-height: 1.5;
+}
+
 .uo-button {
   display: inline-block;
   padding: 4px 10px;
-  margin: 4px 0;
+  margin: 4px 2px;
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -10,6 +35,34 @@
   font-size: 12px;
   user-select: none;
   font-weight: bold;
+}
+
+.uo-input {
+  padding: 4px 4px;
+  margin: 0 4px;
+  background-color: #fff;
+  border-radius: 2px;
+}
+
+.uo-textarea {
+  display: block;
+  width: 100%;
+  min-height: 60px;
+  resize: none;
+  border-radius: 2px;
+  border: 1px solid #ddd;
+  padding: 4px;
+  box-sizing: border-box;
+  background-color: #fff;
+  font-size: 12px;
+  line-height: 1.5
+}
+
+input[type="text"],
+input[type="password"],
+textarea {
+  border: none;
+  outline: none;
 }
 
 @media (hover: hover) {

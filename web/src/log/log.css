@@ -19,13 +19,6 @@
   user-select: none;
 }
 
-.log-feedback {
-  font-size: 14px;
-  color: var(--primary-color);
-  cursor: pointer;
-  user-select: none;
-}
-
 .log-item {
   display: flex;
   align-items: center;

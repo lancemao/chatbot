@@ -1,5 +1,5 @@
 import { fetchAccessToken } from "@/api/network"
-import { UOMeta, UOType } from "@/components/user-option-ui/type"
+import { UOMessageMeta, UOType } from "@/components/user-option-ui/type"
 import type { AppInfo, ConversationData } from "@/types/app"
 
 const CONVERSATION_ID_INFO = 'conversationIdInfo'
@@ -101,9 +101,10 @@ export function restartConversation() {
   localStorage.removeItem('current_conversation');
 }
 
-export function generateOpeningStatementMeta(statements: string[]): UOMeta[] {
-  return statements.map((statement) => ({
+export function generateOpeningStatementMeta(statements: string[]): UOMessageMeta {
+  const options = statements.map((statement) => ({
     type: UOType.Button,
     text: statement,
   }));
+  return { options }
 }

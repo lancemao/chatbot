@@ -10,9 +10,6 @@ const LogPage = () => {
     <div className="log-container">
       <div className="log-header">
         <div className="log-title">运行日志</div>
-        <div className="log-feedback" onClick={() => {
-          // 反馈给开发
-        }}>反馈给开发</div>
       </div>
       {
         logs.map((log, index) => (

@@ -1,12 +1,13 @@
+import { UOButtonMeta } from './type'
 import './uo.css'
 
-const UOButton = ({ text, onClick }: { text: string, onClick: (option: string) => void }) => {
+const UOButton = ({ meta, onClick }: { meta: UOButtonMeta, onClick: (option: string, action: string) => void }) => {
   return (
     <div className="uo-button" onClick={(e) => {
       e.stopPropagation()
-      onClick(text)
+      onClick(meta.text, meta.action)
     }}>
-      {text}
+      {meta.text}
     </div>
   )
 }

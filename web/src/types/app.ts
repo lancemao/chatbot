@@ -1,5 +1,5 @@
 import { WorkFlowResponse } from "@/api/sse"
-import { UOMeta } from "@/components/user-option-ui/type"
+import { UOMessageMeta } from "@/components/user-option-ui/type"
 
 export type AppInfo = {
   // from url
@@ -47,5 +47,5 @@ export type ConversationItem = {
   type: 'Q' | 'A',
   content: string,
   workflow?: WorkFlowResponse,
-  meta?: UOMeta[]
+  meta?: UOMessageMeta
 }
