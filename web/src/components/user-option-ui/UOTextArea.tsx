@@ -6,7 +6,7 @@ const UOTextArea = ({ meta }: { meta: UOTextAreaMeta }) => {
 
   const onChange = (e: any) => {
     const value = e.target.value
-    meta.text = value
+    meta.text = value + '\n'
   }
 
   return (

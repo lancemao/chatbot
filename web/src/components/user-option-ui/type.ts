@@ -5,6 +5,7 @@ export enum UOType {
   Button = 'button',
   Input = 'input',
   TextArea = 'textarea',
+  DatePicker = 'datepicker',
 }
 
 export interface UOMeta {
@@ -27,6 +28,9 @@ export interface UOInputMeta extends UOTextMeta {
 }
 
 export interface UOTextAreaMeta extends UOInputMeta {
+}
+
+export interface UOTDatePickerMeta extends UOTextMeta {
 }
 
 export interface UOMessageMeta {

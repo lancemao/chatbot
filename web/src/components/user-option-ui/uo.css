@@ -35,6 +35,15 @@
   font-size: 12px;
   user-select: none;
   font-weight: bold;
+  text-align: center;
+}
+
+.uo-button-submit {
+  display: block;
+  font-size: 14px;
+  color: white;
+  background-color: var(--primary-color);
+  padding: 6px 0px;
 }
 
 .uo-input {
@@ -54,7 +63,6 @@
   padding: 4px;
   box-sizing: border-box;
   background-color: #fff;
-  font-size: 12px;
   line-height: 1.5
 }
 
@@ -63,6 +71,21 @@ input[type="password"],
 textarea {
   border: none;
   outline: none;
+}
+
+.uo-date-picker {
+  display: flex;
+}
+
+.uo-date-picker-text {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  color: var(--primary-color);
+  font-size: 12px;
+  user-select: none;
+  font-weight: bold;
+  padding: 0px 4px;
 }
 
 @media (hover: hover) {

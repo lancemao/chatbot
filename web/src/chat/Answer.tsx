@@ -1,7 +1,7 @@
 import React from "react"
 import img_user from '@/assets/images/user_profile.svg';
 import Markdown from "@/components/Markdown";
-import { UOButtonMeta, UOInputMeta, UOMessageMeta, UOMeta, UOTextAreaMeta, UOTextMeta, UOType } from "@/components/user-option-ui/type";
+import { UOButtonMeta, UOInputMeta, UOMessageMeta, UOMeta, UOTDatePickerMeta, UOTextAreaMeta, UOTextMeta, UOType } from "@/components/user-option-ui/type";
 import { ConversationItem } from "@/types/app";
 import UOButton from "@/components/user-option-ui/UOButton";
 import { useNavigate } from "react-router-dom";
@@ -9,6 +9,7 @@ import UOText from "@/components/user-option-ui/UOText";
 import UOInput from "@/components/user-option-ui/UOInput";
 import { UOParser } from "@/components/user-option-ui/UOParser";
 import UOTextArea from "@/components/user-option-ui/UOTextArea";
+import UODatePicker from "@/components/user-option-ui/UODatePicker";
 
 const Answer = ({ item, onUserOption }: { item: ConversationItem, onUserOption?: any }) => {
 
@@ -49,6 +50,10 @@ const Answer = ({ item, onUserOption }: { item: ConversationItem, onUserOption?:
       {
         meta.type === UOType.TextArea &&
         <UOTextArea meta={meta as UOTextAreaMeta} />
+      }
+      {
+        meta.type === UOType.DatePicker &&
+        <UODatePicker meta={meta as UOTDatePickerMeta} />
       }
     </React.Fragment>
   }

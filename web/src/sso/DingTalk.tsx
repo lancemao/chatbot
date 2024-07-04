@@ -3,7 +3,7 @@ import Chat from '../chat/Chat';
 import AppContext from '@/AppContext';
 import * as dd from 'dingtalk-jsapi';
 import VoiceContext, { VoiceState } from '@/VoiceContext';
-import MarkdownContext from '@/MarkdownContext';
+import UserOptionContext from '@/UserOptionContext';
 import User from './User';
 import { Log } from '@/log/Log';
 
@@ -169,7 +169,7 @@ const DingTalk = () => {
     })
   }
 
-  const onLinkClick = (e, url: string) => {
+  const onMarkdownLinkClick = (e, url: string) => {
     if (url?.startsWith('http://dingtalk.ai') && corpId) {
       e.preventDefault()
       const urlObj = new URL(url)
@@ -189,11 +189,24 @@ const DingTalk = () => {
     }
   }
 
+  const onDatePickerClick = (_, date: string): Promise<number> => {
+    return new Promise((resolve, reject) => {
+      dd.chooseOneDayInCalendar({
+        default: new Date(date).getTime(),
+        success: (res) => {
+          resolve(res.chosen)
+        },
+        fail: (err) => { reject(err) },
+        complete: () => { },
+      });
+    })
+  }
+
   return (
     <VoiceContext.Provider value={{ voiceState, onStart, onStop }}>
-      <MarkdownContext.Provider value={{ onLinkClick }} >
+      <UserOptionContext.Provider value={{ onMarkdownLinkClick, onDatePickerClick }} >
         <Chat />
-      </MarkdownContext.Provider>
+      </UserOptionContext.Provider>
     </VoiceContext.Provider >
   );
 }

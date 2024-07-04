@@ -9,7 +9,7 @@ import { atelierSeasideLight } from 'react-syntax-highlighter/dist/esm/styles/hl
 
 import './markdown.css'
 import { useContext } from 'react'
-import MarkdownContext from '@/MarkdownContext'
+import UserOptionContext from '@/UserOptionContext'
 
 // Available language https://github.com/react-syntax-highlighter/react-syntax-highlighter/blob/master/AVAILABLE_LANGUAGES_HLJS.MD
 const capitalizationLanguageNameMap: Record<string, string> = {
@@ -41,7 +41,7 @@ const getCorrectCapitalizationLanguageName = (language: string) => {
 
 const Markdown = ({ ...props }) => {
 
-  const { onLinkClick } = useContext(MarkdownContext)
+  const { onMarkdownLinkClick } = useContext(UserOptionContext)
 
   const components: Components = {
     code({ inline, className, children, ...props }) {
@@ -119,7 +119,7 @@ const Markdown = ({ ...props }) => {
           target="_blank"
           rel="noreferrer"
           onClick={(e) => {
-            href && onLinkClick?.(e, href)
+            href && onMarkdownLinkClick?.(e, href)
           }} />
       )
     }
