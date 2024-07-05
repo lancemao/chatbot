@@ -1,8 +1,8 @@
 import { getAccessToken } from "@/chat/utils"
 
-export const sendMessage = async (appCode: string, conversation_id: string | undefined, query: string, callbacks) => {
+export const sendMessage = async (appCode: string, conversation_id: string | undefined, inputs: any, query: string, callbacks) => {
   const body = {
-    inputs: {},
+    inputs,
     query,
     response_mode: 'streaming',
     conversation_id

@@ -13,10 +13,12 @@ import Question from "./Question";
 import RespondIndicator from "./RespondIndicator";
 import AppContext from "@/AppContext";
 import StopRespondingButton from "./StopRespondingButton";
+import RuntimeContext from "@/RuntimeContext";
 
 const Chat = () => {
 
-  const { appInfo } = useContext(AppContext);
+  const { appInfo, addLog } = useContext(AppContext);
+  const { location } = useContext(RuntimeContext)
   const [currentConversation, setCurrentConversation] = useState<ConversationData | undefined>()
   const [contentList, setContentList] = React.useState<ConversationItem[]>([])
 
@@ -88,7 +90,8 @@ const Chat = () => {
       // when user starts the very first conversation, the currentConversation is null
       // by passing '' to backend, it will create a new conversation for us
       const conversationId = currentConversation?.id || '';
-      sendMessage(appInfo?.code, conversationId, query, { onData, onWorkflowDone, onCompleted, getAbortController });
+      const inputs = { location }
+      sendMessage(appInfo?.code, conversationId, inputs, query, { onData, onWorkflowDone, onCompleted, getAbortController });
     }
   }
 

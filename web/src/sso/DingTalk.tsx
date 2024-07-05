@@ -3,7 +3,7 @@ import Chat from '../chat/Chat';
 import AppContext from '@/AppContext';
 import * as dd from 'dingtalk-jsapi';
 import VoiceContext, { VoiceState } from '@/VoiceContext';
-import UserOptionContext from '@/UserOptionContext';
+import RuntimeContext from '@/RuntimeContext';
 import User from './User';
 import { Log } from '@/log/Log';
 
@@ -16,6 +16,7 @@ const DingTalk = () => {
 
   const { user, setUser, appInfo, addLog } = useContext(AppContext)
   const [voiceState, setVoiceState] = useState<VoiceState>(VoiceState.PREPARING)
+  const [location, setLocation] = useState<string>('')
 
   useEffect(() => {
     if (appInfo) {
@@ -23,30 +24,73 @@ const DingTalk = () => {
         dd.setNavigationTitle({ title: appInfo?.title })
         user.onIconClick = onIconClick
 
-        if (corpId) {
-          dd.ready(function () {
-            // request js api permission must be in ready and cannot use await
-            grantJsPermission()
-
-            dd.runtime.permission.requestAuthCode({
-              corpId: corpId
-            }).then((result) => {
-              // addLog(Log.info(result.code))
-              getUserInfo(result.code)
-            }).catch((err) => {
-              addLog(Log.error("获取授权码失败：" + JSON.stringify(err)))
-            })
-          })
-        } else {
-          addLog(Log.error(ERR_NO_CORP_ID))
-          setVoiceState(VoiceState.NA)
-        }
+        initDingTalk()
       } else {
         addLog(Log.error(ERR_NOT_IN_DINGTALK))
         setVoiceState(VoiceState.NA)
       }
     }
   }, [appInfo])
+
+  async function initDingTalk() {
+    dd.error(function (err) {
+      addLog(Log.error("获取js api权限失败：" + JSON.stringify(err)))
+      setVoiceState(VoiceState.NA)
+    })
+
+    // url needs to be encoded
+    const info = await getJsAPIInfo(encodeURIComponent(window.location.href))
+    const { agentId, timeStamp, nonceStr, signature } = info
+    dd.config({
+      agentId,
+      corpId,
+      timeStamp,
+      nonceStr,
+      signature,
+      jsApiList: [
+        'biz.chat.openSingleChat',
+        'biz.util.openLink',
+        'dd.getLocation',
+        'device.geolocation.get',
+        'device.audio.startRecord',
+        'device.audio.stopRecord',
+        'device.audio.download',
+        'device.audio.translateVoice'
+      ]
+    })
+
+    dd.ready(function () {
+
+      dd.device.geolocation.get({
+        targetAccuracy: 200,
+        coordinate: 1,
+        withReGeocode: true,
+        useCache: true
+      }).then((res) => {
+        addLog(Log.info("获取位置成功：" + JSON.stringify(res)))
+        const { address } = res;
+        setLocation(address)
+      }).catch((err) => {
+        addLog(Log.error("获取位置失败" + JSON.stringify(err)))
+      })
+
+      setVoiceState(VoiceState.READY)
+
+      if (corpId) {
+        dd.runtime.permission.requestAuthCode({
+          corpId: corpId
+        }).then((result) => {
+          // addLog(Log.info(result.code))
+          getUserInfo(result.code)
+        }).catch((err) => {
+          addLog(Log.error("获取授权码失败：" + JSON.stringify(err)))
+        })
+      } else {
+        addLog(Log.error(ERR_NO_CORP_ID))
+        setVoiceState(VoiceState.NA)
+      }
+    })
+  }
 
   function getUserInfo(code: string) {
     fetch('/agent/dingtalk/get-user-info?code=' + code)
@@ -78,35 +122,6 @@ const DingTalk = () => {
     } else {
       addLog(Log.error(ERR_NOT_IN_DINGTALK))
     }
-  }
-
-  async function grantJsPermission() {
-
-    dd.error(function (err) {
-      addLog(Log.error("获取js api权限失败：" + JSON.stringify(err)))
-      setVoiceState(VoiceState.NA)
-    })
-
-    // url needs to be encoded
-    const info = await getJsAPIInfo(encodeURIComponent(window.location.href))
-    const { agentId, timeStamp, nonceStr, signature } = info
-    dd.config({
-      agentId,
-      corpId,
-      timeStamp,
-      nonceStr,
-      signature,
-      jsApiList: [
-        'biz.chat.openSingleChat',
-        'biz.util.openLink',
-        'device.audio.startRecord',
-        'device.audio.stopRecord',
-        'device.audio.download',
-        'device.audio.translateVoice'
-      ]
-    })
-
-    setVoiceState(VoiceState.READY)
   }
 
   async function getJsAPIInfo(url: string) {
@@ -204,9 +219,9 @@ const DingTalk = () => {
 
   return (
     <VoiceContext.Provider value={{ voiceState, onStart, onStop }}>
-      <UserOptionContext.Provider value={{ onMarkdownLinkClick, onDatePickerClick }} >
+      <RuntimeContext.Provider value={{ location, onMarkdownLinkClick, onDatePickerClick }} >
         <Chat />
-      </UserOptionContext.Provider>
+      </RuntimeContext.Provider>
     </VoiceContext.Provider >
   );
 }

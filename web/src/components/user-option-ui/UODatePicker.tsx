@@ -1,12 +1,14 @@
 import { useContext, useState } from 'react';
 import { UOTDatePickerMeta } from './type';
-import UserOptionContext from '@/UserOptionContext'
+import RuntimeContext from '@/RuntimeContext'
 import './uo.css'
 
 const UODatePicker = ({ meta }: { meta: UOTDatePickerMeta }) => {
 
-  const { onDatePickerClick } = useContext(UserOptionContext)
-  const [dateString, setDateString] = useState(meta.text || getDate())
+  meta.text = meta.text || getDate()
+
+  const { onDatePickerClick } = useContext(RuntimeContext)
+  const [dateString, setDateString] = useState(meta.text)
 
   function getDate(milliseconds?: number) {
     const date = milliseconds ? new Date(milliseconds) : new Date();
