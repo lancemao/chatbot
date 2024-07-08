@@ -30,7 +30,6 @@
   background-color: #fff;
   border: 1px solid #ddd;
   border-radius: 6px;
-  cursor: pointer;
   color: var(--primary-color);
   font-size: 12px;
   user-select: none;
@@ -44,6 +43,13 @@
   color: white;
   background-color: var(--primary-color);
   padding: 6px 0px;
+}
+
+@media (hover: hover) {
+  .uo-button-submit:hover {
+    background-color: #556ca2 !important;
+    cursor: pointer;
+  }
 }
 
 .uo-input {
@@ -64,6 +70,10 @@
   box-sizing: border-box;
   background-color: #fff;
   line-height: 1.5
+}
+
+.uo-textarea-error {
+  border: 1px solid red;
 }
 
 input[type="text"],

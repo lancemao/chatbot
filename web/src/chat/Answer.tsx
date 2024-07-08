@@ -15,19 +15,41 @@ const Answer = ({ item, onUserOption }: { item: ConversationItem, onUserOption?:
 
   const navigate = useNavigate();
 
-  const userOption = UOParser.parse(item.content)
+  const [userOption, setUserOption] = React.useState(UOParser.parse(item.content))
 
   const onButtonClick = (option: string, action: string) => {
     if (action === 'submit') {
+      let allRequiredFieldsBeenFilled = true
       let query = ''
       if (userOption?.content) {
-        for (const meta of userOption?.content) {
+        const content = userOption.content.map((meta: UOMeta) => {
+          if (!meta.text && meta.required) {
+            meta.error = 'This field is required'
+            allRequiredFieldsBeenFilled = false
+          }
           query += meta.text || ''
-        }
+          return meta
+        })
+        setUserOption({ ...userOption, content })
       }
-      onUserOption?.(query)
+      if (allRequiredFieldsBeenFilled) {
+        onUserOption?.(query)
+      }
     } else {
       onUserOption?.(option)
+    }
+  }
+
+  const onTextAreaChange = (meta: UOTextAreaMeta) => {
+    if (userOption?.content) {
+      const content = userOption.content.map((m: UOMeta) => {
+        if (m.id === meta.id) {
+          m.error = ''
+          return meta
+        }
+        return m
+      })
+      setUserOption({ ...userOption, content })
     }
   }
 
@@ -49,7 +71,7 @@ const Answer = ({ item, onUserOption }: { item: ConversationItem, onUserOption?:
       }
       {
         meta.type === UOType.TextArea &&
-        <UOTextArea meta={meta as UOTextAreaMeta} />
+        <UOTextArea meta={meta as UOTextAreaMeta} onTextAreaChange={onTextAreaChange} />
       }
       {
         meta.type === UOType.DatePicker &&

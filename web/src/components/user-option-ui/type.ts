@@ -10,9 +10,12 @@ export enum UOType {
 
 export interface UOMeta {
   type: UOType,
+  id?: string,
   width?: number,
   height?: number
   text?: string,
+  required?: boolean,
+  error?: string
 }
 
 export interface UOTextMeta extends UOMeta {
