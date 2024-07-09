@@ -6,7 +6,11 @@ Then in [Dingtalk console](https://open-dev.dingtalk.com/fe/app?hash=%23%2Fcorp%
 
 ![image](./images/dd_create_app.png)
 
-in app setting, enter our agent's url
+in app setting, enter our agent's url, in my case:
+
+```
+http://172.70.4.235:3001/chatx/?appCode=DUhK0XQv0NPF27G6&corpId=$CORPID$
+```
 
 ![image](./images/dd_agent_url.png)
 
