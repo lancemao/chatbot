@@ -11,17 +11,17 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  width: 100%;
+  justify-content: space-between;
   height: 56px;
   background-image: linear-gradient(to right, rgb(37 99 235), rgba(14 165 233));
   color: white;
+  padding: 0 16px;
 }
 
 .chat-header-title {
   flex: 1;
   font-size: 15px;
   font-weight: bold;
-  padding-left: 16px;
 }
 
 .conversation-container {

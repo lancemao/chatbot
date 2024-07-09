@@ -1,0 +1,20 @@
+.about-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.about-content {
+  padding: 8px;
+  flex: 1;
+}
+
+.about-custom-disclaimer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 16px 0;
+  font-size: 12px;
+  color: #888888
+}

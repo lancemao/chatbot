@@ -11,6 +11,7 @@ import { Routes, Route } from 'react-router-dom';
 import AnswerDetail from './chat/AnswerDetail';
 import LogPage from './log/LogPage';
 import { Log } from './log/Log';
+import AboutPage from './about/AboutPage';
 
 const App = () => {
 
@@ -59,6 +60,7 @@ const App = () => {
         <Route path="/chatx" element={<DingTalk />} />
         <Route path="/chatx/answer-detail" element={<AnswerDetail />} />
         <Route path="/chatx/log" element={<LogPage />} />
+        <Route path="/chatx/about" element={<AboutPage />} />
       </Routes>
     </AppContext.Provider >
   );
