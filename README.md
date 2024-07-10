@@ -19,7 +19,7 @@ An mobile chatbot framework based on [dify agent](https://github.com/langgenius/
 
 * [Start frontend](./web/README.md)
 
-## Dingtalk showcase
+## Dingtalk Showcase
 
 ### Home
 
@@ -27,12 +27,43 @@ An mobile chatbot framework based on [dify agent](https://github.com/langgenius/
 <img src="./document/images/dingtalk.jpg" width="400" />
 </div>
 
-### in-chat user options
+### User Context
+
+You can always ask LLM `who you are?` and it will give you its basic information. But you can't ask LLM `who I am?` because it doesn't have the context of the current user. Now, since we are inside dingtalk, we can get user's information via dingtalk's open api so that our Agent knows the context
+
+<div align="center">
+<img src="./document/images/user_context.jpg" width="400" />
+</div>
+
+It would be dumb to tell user who they are, of course user know who they are. However, user might forget (or really don't know) more *advanced* information like the precise name of their department, their role, their employee number etc, not to mention more remote-related information like their manager, their direct subordinates, their colleagues etc, even, their parent's birthday, but that is another story.
+
+<div align="center">
+<img src="./document/images/user_employee_number.jpg" width="400" />
+</div>
+
+### Seamless Navigation
+
+In workplace, we often need to ask for help, e.g. *who knows how to use the printer* We can store such information in our Agent and the little trick is to return not only the name of the person, but also the link of the person so that when user clicks on the link, it opens a chat directly
+
+<div align="center">
+<img src="./document/images/navigation1.jpg" width="400" />
+<img src="./document/images/navigation2.jpg" width="400" />
+</div>
+ 
+### In-chat User Options
 
 when user asks the bot to submit an application, chances are user is not providing all the required information. Our bot will help user to fill in the missing information.
 
 <div align="center">
 <img src="./document/images/user_option_1.jpg" width="400" />
 <img src="./document/images/user_option_2.jpg" width="400" />
+</div>
+
+### Location
+
+Have you ever been in a situation when your friend (or customer) asks where you are or where your company you are? Now we can use OA's API to get user's current location and answer location based questions.
+
+<div align="center">
+<img src="./document/images/location.jpg" width="400" />
 </div>
 
