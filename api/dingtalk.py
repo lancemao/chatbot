@@ -113,11 +113,11 @@ class DDGetUserInfoDesApi(Resource):
 
             if user_detail is not None:
                 name = f"我的名字是{user_detail['name']}" if user_detail['name'] else ''
-                nickname = f"我的昵称是{user_detail['nickname']}" if user_detail['nickname'] else ''
-                email = f"我的邮箱是{user_detail['email']}" if user_detail['email'] else ''
-                mobile = f"我的手机号码是{user_detail['mobile']}" if user_detail['mobile'] else ''
-                icon = f"我的头像链接是{user_detail['avatar']}" if user_detail['avatar'] else ''
-                employee_id = f"我的工号是{user_detail['job_number']}，这也是我登录钉钉的账号名" if user_detail['job_number'] else ''
+                nickname = f"我的昵称是{user_detail['nickname']}" if 'nickname' in user_detail and user_detail['nickname'] else ''
+                email = f"我的邮箱是{user_detail['email']}" if 'email' in user_detail and user_detail['email'] else ''
+                mobile = f"我的手机号码是{user_detail['mobile']}" if 'mobile' in user_detail and user_detail['mobile'] else ''
+                icon = f"我的头像链接是{user_detail['avatar']}" if 'avatar' in user_detail and user_detail['avatar'] else ''
+                employee_id = f"我的工号是{user_detail['job_number']}，这也是我登录钉钉的账号名" if 'job_number' in user_detail and user_detail['job_number'] else ''
                 des = f"{name}\n{nickname}\n{email}\n{mobile}\n{icon}\n{employee_id}"
                 # print(des)
                 return des
