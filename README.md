@@ -61,7 +61,7 @@ when user asks the bot to submit an application, chances are user is not providi
 
 ### Location
 
-Have you ever been in a situation when your friend (or customer) asks where you are or where your company you are? Now we can use OA's API to get user's current location and answer location based questions.
+Have you ever been in a situation when your friend (or customer) asks where you are? Now we can use OA's API to get user's current location and answer location based questions.
 
 <div align="center">
 <img src="./document/images/location.jpg" width="400" />
