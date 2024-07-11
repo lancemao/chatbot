@@ -133,6 +133,7 @@ const Markdown = ({ ...props }) => {
           RehypeKatex,
         ]}
         components={components}
+        transformLinkUri={url => url}
         linkTarget='_blank'>
         {props.content}
       </ReactMarkdown>
