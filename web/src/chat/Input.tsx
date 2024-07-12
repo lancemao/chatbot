@@ -76,15 +76,16 @@ const Input = ({ queryItem, onSend }) => {
     }
   }
 
-  const onVoiceButtonDown = () => {
+  const onVoiceButtonDown = (e) => {
     if (voiceState !== VoiceState.READY) return
 
     onStart()
     setInsideVoiceInputContainer(true)
     setIsRecording(true)
+    e.preventDefault();
   }
 
-  const onVoiceButtonUp = () => {
+  const onVoiceButtonUp = (e) => {
     if (voiceState !== VoiceState.READY) return
 
     if (insideVoiceInputContainer) {
@@ -97,6 +98,7 @@ const Input = ({ queryItem, onSend }) => {
     }
 
     setIsRecording(false)
+    e.preventDefault();
   }
 
   const onVoiceCancel = () => {

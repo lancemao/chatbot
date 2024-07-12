@@ -272,16 +272,29 @@ def get_leave_in(access_token, user_id, leave_code, leave_type):
     try:
         if res.status_code == 200:
             data = res.json()
-            print(data)
+            # print(data)
             if data['errcode'] == 0:
                 result = data['result']
                 if 'leave_quotas' in result:
-                    total = result['leave_quotas'][0]['quota_num_per_day'] / 100
-                    used = result['leave_quotas'][0]['used_num_per_day'] / 100
-                    remain = total - used
-                    return (f"你的{leave_type}配额为 {total} 天, "
-                            f"你已经请了{used}天{leave_type}, "
-                            f"你还剩余{remain}天{leave_type}")
+                    leave_quotas = result['leave_quotas']
+                    total = 0
+                    used = 0
+                    remain = 0
+                    unit = '天'
+                    for leave_quota in leave_quotas:
+                        if 'quota_num_per_day' in leave_quota:
+                            unit = '天'
+                            total += leave_quota['quota_num_per_day'] / 100
+                            used += leave_quota['used_num_per_day'] / 100
+                            remain += total - used
+                        elif 'quota_num_per_hour' in leave_quota:
+                            unit = '小时'
+                            total += leave_quota['quota_num_per_hour'] / 100
+                            used += leave_quota['used_num_per_hour'] / 100
+                            remain += total - used
+                    return (f"你的{leave_type}配额为 {total} {unit}, "
+                            f"你已经请了{used}{unit}{leave_type}, "
+                            f"你还剩余{remain}{unit}{leave_type}")
                 else:
                     return f"你没有{leave_type}信息"
     except:

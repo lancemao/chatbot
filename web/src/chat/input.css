@@ -2,6 +2,7 @@
   position: sticky;
   bottom: 0px;
   background-color: white;
+  user-select: none;
 }
 
 .chat-input-container {
@@ -12,6 +13,7 @@
   border: 1px solid lightgray;
   margin: 0 16px 16px 16px;
   border-radius: 6px;
+  user-select: none;
 }
 
 .chat-input-switch-button {
@@ -22,11 +24,13 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  user-select: none;
 }
 
 .chat-input-switch-button-image {
   width: 26px;
   height: 26px;
+  user-select: none;
 }
 
 .chat-input-hold-to-speak-container {
@@ -39,6 +43,7 @@
   user-select: none;
   min-height: 44px;
   color: gray;
+  user-select: none;
 }
 
 .chat-input-hold-to-speak-container-ready {
@@ -49,6 +54,7 @@
   width: 100%;
   height: 100%;
   border-radius: 8px;
+  user-select: none;
 }
 
 @media (hover: hover) {
