@@ -180,9 +180,10 @@ class DDLeaveQuotaApi(Resource):
             return 'cannot get access token'
 
         args = request.get_json()
-        leave_codes = args['leave_codes'] if 'leave_codes' in args else None
+        annual_leave_code = args['annual_leave_code'] if 'annual_leave_code' in args else None
+        shift_leave_code = args['shift_leave_code'] if 'shift_leave_code' in args else None
 
-        if leave_codes is None:
+        if annual_leave_code is None and shift_leave_code is None:
             return jsonify({'message': 'no leave type(s) specified'}), 400
 
         try:
@@ -192,37 +193,13 @@ class DDLeaveQuotaApi(Resource):
         except Unauthorized:
             return jsonify({'message': Unauthorized.args[0]}), 200
 
-        body = {
-            "leave_code": leave_codes,
-            "op_userid": op_user_id,
-            "userids": user_id,
-            "offset": 0,
-            "size": 10
-        }
+        annual_result = get_leave_in(access_token, user_id, annual_leave_code, '年假')
+        shift_result = get_leave_in(access_token, user_id, shift_leave_code, '调休')
 
-        res = requests.post(f'https://oapi.dingtalk.com/topapi/attendance/vacation/quota/list?access_token={access_token}',
-                            json=body)
+        if annual_result is not None or shift_result is not None:
+            return f"{annual_result}.\n\n{shift_result}"
 
-        try:
-            if res.status_code == 200:
-                data = res.json()
-                print(data)
-                if data['errcode'] == 0:
-                    total = data['result']['leave_quotas'][0]['quota_num_per_day'] / 100
-                    used = data['result']['leave_quotas'][0]['used_num_per_day'] / 100
-                    remain = total - used
-                    return (f"your leave quota is {total} in days, "
-                            f"you already used {used} days, "
-                            f"you still have {remain} days leave")
-        except:
-            pass
-
-        proxy_response = Response(
-            res.iter_content(),
-            res.status_code,
-            headers=json_header
-        )
-        return proxy_response
+        return f"cannot get your leave information"
 
 
 def get_access_token():
@@ -279,6 +256,38 @@ def get_user_detail(access_token, user_id):
         print(res.json())
         return None
 
+
+def get_leave_in(access_token, user_id, leave_code, leave_type):
+    body = {
+        "leave_code": leave_code,
+        "op_userid": op_user_id,
+        "userids": user_id,
+        "offset": 0,
+        "size": 10
+    }
+
+    res = requests.post(f'https://oapi.dingtalk.com/topapi/attendance/vacation/quota/list?access_token={access_token}',
+                        json=body)
+
+    try:
+        if res.status_code == 200:
+            data = res.json()
+            print(data)
+            if data['errcode'] == 0:
+                result = data['result']
+                if 'leave_quotas' in result:
+                    total = result['leave_quotas'][0]['quota_num_per_day'] / 100
+                    used = result['leave_quotas'][0]['used_num_per_day'] / 100
+                    remain = total - used
+                    return (f"你的{leave_type}配额为 {total} 天, "
+                            f"你已经请了{used}天{leave_type}, "
+                            f"你还剩余{remain}天{leave_type}")
+                else:
+                    return f"你没有{leave_type}信息"
+    except:
+        pass
+
+    return None
 
 class DDGetApiVersion(Resource):
     @staticmethod
