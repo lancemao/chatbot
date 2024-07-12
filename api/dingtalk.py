@@ -13,6 +13,7 @@ import time
 agent_id = os.environ.get('DINGTALK_AGENT_ID')
 app_key = os.environ.get('DINGTALK_APP_KEY')
 app_secret = os.environ.get('DINGTALK_APP_SECRET')
+op_user_id = os.environ.get('DINGTALK_OP_USER_ID')
 json_header = {"content-type": "application/json"}
 user_token_key = '_practical_ai_user'
 
@@ -112,13 +113,14 @@ class DDGetUserInfoDesApi(Resource):
             # print(user_detail)
 
             if user_detail is not None:
+                uid = f"我的用户 ID（user ID）是{user_detail['userid']}" if 'userid' in user_detail and user_detail['userid'] else ''
                 name = f"我的名字是{user_detail['name']}" if user_detail['name'] else ''
                 nickname = f"我的昵称是{user_detail['nickname']}" if 'nickname' in user_detail and user_detail['nickname'] else ''
                 email = f"我的邮箱是{user_detail['email']}" if 'email' in user_detail and user_detail['email'] else ''
                 mobile = f"我的手机号码是{user_detail['mobile']}" if 'mobile' in user_detail and user_detail['mobile'] else ''
                 icon = f"我的头像链接是{user_detail['avatar']}" if 'avatar' in user_detail and user_detail['avatar'] else ''
                 employee_id = f"我的工号是{user_detail['job_number']}，这也是我登录钉钉的账号名" if 'job_number' in user_detail and user_detail['job_number'] else ''
-                des = f"{name}\n{nickname}\n{email}\n{mobile}\n{icon}\n{employee_id}"
+                des = f"{uid}\n{name}\n{nickname}\n{email}\n{mobile}\n{icon}\n{employee_id}"
                 # print(des)
                 return des
             else:
@@ -161,6 +163,59 @@ class DDCreateProcessApi(Resource):
             data = res.json()
             if data['errcode'] == 0:
                 return json.dumps({'errorCode': 0, 'message': '已成功提交审批电子流'}, ensure_ascii=False)
+
+        proxy_response = Response(
+            res.iter_content(),
+            res.status_code,
+            headers=json_header
+        )
+        return proxy_response
+
+
+class DDLeaveQuotaApi(Resource):
+    @staticmethod
+    def post():
+        access_token = get_access_token()
+        if access_token is None:
+            return 'cannot get access token'
+
+        args = request.get_json()
+        leave_codes = args['leave_codes'] if 'leave_codes' in args else None
+
+        if leave_codes is None:
+            return jsonify({'message': 'no leave type(s) specified'}), 400
+
+        try:
+            user_token = request.cookies.get(user_token_key)
+            decoded = PassportService().verify(user_token)
+            user_id = decoded.get('sub')
+        except Unauthorized:
+            return jsonify({'message': Unauthorized.args[0]}), 200
+
+        body = {
+            "leave_code": leave_codes,
+            "op_userid": op_user_id,
+            "userids": user_id,
+            "offset": 0,
+            "size": 10
+        }
+
+        res = requests.post(f'https://oapi.dingtalk.com/topapi/attendance/vacation/quota/list?access_token={access_token}',
+                            json=body)
+
+        try:
+            if res.status_code == 200:
+                data = res.json()
+                print(data)
+                if data['errcode'] == 0:
+                    total = data['result']['leave_quotas'][0]['quota_num_per_day'] / 100
+                    used = data['result']['leave_quotas'][0]['used_num_per_day'] / 100
+                    remain = total - used
+                    return (f"your leave quota is {total} in days, "
+                            f"you already used {used} days, "
+                            f"you still have {remain} days leave")
+        except:
+            pass
 
         proxy_response = Response(
             res.iter_content(),
@@ -235,4 +290,5 @@ api.add_resource(DDGetJSTicketApi, '/get-js-api-signature')
 api.add_resource(DDGetUserInfoApi, '/get-user-info')
 api.add_resource(DDGetUserInfoDesApi, '/get-user-info-des')
 api.add_resource(DDCreateProcessApi, '/process/create/<process_id>')
+api.add_resource(DDLeaveQuotaApi, '/leave/quota')
 api.add_resource(DDGetApiVersion, '/version')

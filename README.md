@@ -67,3 +67,9 @@ Have you ever been in a situation when your friend (or customer) asks where you 
 <img src="./document/images/location.jpg" width="400" />
 </div>
 
+## Limitations
+
+* Use my [dify fork](https://github.com/lancemao/dify) with SSO implemented
+* Quite many dify frontend features are not supported yet, and some are modified
+* Although some basic feature might work in PC, but many won't
+
