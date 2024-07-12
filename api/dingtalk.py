@@ -286,12 +286,11 @@ def get_leave_in(access_token, user_id, leave_code, leave_type):
                             unit = '天'
                             total += leave_quota['quota_num_per_day'] / 100
                             used += leave_quota['used_num_per_day'] / 100
-                            remain += total - used
                         elif 'quota_num_per_hour' in leave_quota:
                             unit = '小时'
                             total += leave_quota['quota_num_per_hour'] / 100
                             used += leave_quota['used_num_per_hour'] / 100
-                            remain += total - used
+                        remain = total - used
                     return (f"你的{leave_type}配额为 {total} {unit}, "
                             f"你已经请了{used}{unit}{leave_type}, "
                             f"你还剩余{remain}{unit}{leave_type}")
