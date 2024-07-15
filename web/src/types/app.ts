@@ -46,6 +46,10 @@ export type ConversationItem = {
   id: string, // message id
   type: 'Q' | 'A',
   content: string,
+  // in SSE, we don't display answer all at once. 
+  // instead, we will play a fast animation that appends a piece of words to the screen in each frame
+  displayEnd: number,
+  completed: boolean,
   workflow?: WorkFlowResponse,
   meta?: UOMessageMeta
 }

@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import img_user from '@/assets/images/user_profile.svg';
 import Markdown from "@/components/Markdown";
 import { UOButtonMeta, UOInputMeta, UOMessageMeta, UOMeta, UOTDatePickerMeta, UOTextAreaMeta, UOTextMeta, UOType } from "@/components/user-option-ui/type";
@@ -16,6 +16,38 @@ const Answer = ({ item, onUserOption }: { item: ConversationItem, onUserOption?:
   const navigate = useNavigate();
 
   const [userOption, setUserOption] = React.useState(UOParser.parse(item.content))
+  const [end, setEnd] = React.useState(item.displayEnd)
+  const [timer, setTimer] = React.useState<NodeJS.Timer>()
+
+  const increment = () => {
+    const total = item.content.length
+    if (item.displayEnd < total && !item.completed) {
+      item.displayEnd += Math.ceil((total - item.displayEnd) / 60) // assuming refresh rate is 60
+      if (item.displayEnd >= total) {
+        item.displayEnd = total
+      }
+      setEnd(item.displayEnd)
+    }
+  }
+
+  useEffect(() => {
+    if (!timer && !item.completed) {
+      setTimer(setInterval(increment, 1))
+    }
+
+    return () => {
+      timer && clearInterval(timer)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (item.completed) {
+      const total = item.content.length
+      item.displayEnd = total
+      setEnd(item.displayEnd)
+      timer && clearInterval(timer)
+    }
+  }, [item.completed])
 
   const onButtonClick = (option: string, action: string) => {
     if (action === 'submit') {
@@ -120,7 +152,7 @@ const Answer = ({ item, onUserOption }: { item: ConversationItem, onUserOption?:
             item.id === 'error' ?
               <div className="answer-text-error">{item.content}</div>
               : userOption ? createUOContent(userOption)
-                : <Markdown content={item.content}></Markdown>
+                : <Markdown content={item.content.substring(0, end)}></Markdown>
           }
           {
             item.meta && createUOContent(item.meta)

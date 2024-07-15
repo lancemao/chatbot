@@ -44,8 +44,8 @@ const Chat = () => {
             // backend returns an array of messages, each message contains both query and answer.
             // we need to separate them and display them in a list.
             conversationContent.forEach(item => {
-              list.push({ id: item.id, type: 'Q', content: item.query.trim() });
-              list.push({ id: item.id, type: 'A', content: item.answer.trim() });
+              list.push({ id: item.id, type: 'Q', content: item.query.trim() , displayEnd: item.query.length, completed: true });
+              list.push({ id: item.id, type: 'A', content: item.answer.trim(), displayEnd: item.answer.length, completed: true });
             });
           }
 
@@ -60,7 +60,7 @@ const Chat = () => {
 
   useEffect(() => {
     window.scrollTo(0, document.body.scrollHeight);
-  }, [contentList])
+  }, [responding, contentList])
 
   const onRestart = () => {
     restartConversation();
@@ -73,7 +73,7 @@ const Chat = () => {
     if (appInfo?.opening_statement) {
       // if there is an opening statement, we will add it to the list as the first item.
       const userOptionMeta = generateOpeningStatementMeta(appInfo.suggested_questions)
-      list.push({ id: '0', type: 'A', content: appInfo.opening_statement, meta: userOptionMeta });
+      list.push({ id: '0', type: 'A', content: appInfo.opening_statement, meta: userOptionMeta, displayEnd: appInfo.opening_statement.length, completed: true });
     }
     return list
   }
@@ -85,7 +85,7 @@ const Chat = () => {
 
       // temperary local id for query item. backend is not aware of it
       const random = Math.random().toString(36).substring(7);
-      setContentList(preContentList => [...preContentList, { id: random, type: 'Q', content: query }]);
+      setContentList(preContentList => [...preContentList, { id: random, type: 'Q', content: query, displayEnd: query.length, completed: true }]);
 
       // when user starts the very first conversation, the currentConversation is null
       // by passing '' to backend, it will create a new conversation for us
@@ -104,7 +104,7 @@ const Chat = () => {
         existingMessage.content += message;
         return [...preContentList];
       } else {
-        return [...preContentList, { id: moreInfo.messageId, type: 'A', content: message }]
+        return [...preContentList, { id: moreInfo.messageId, type: 'A', content: message, displayEnd: 0, completed: false }]
       }
     });
   }
@@ -117,25 +117,28 @@ const Chat = () => {
         const existingMessage = preContentList.find(item => item.id === msgId);
         if (existingMessage) {
           existingMessage.workflow = workflow;
+          existingMessage.completed = true
           return [...preContentList];
         } else {
-          return [...preContentList, { id: msgId, type: 'A', content: '', workflow: workflow }]
+          return [...preContentList, { id: msgId, type: 'A', content: '', workflow: workflow, displayEnd: 0, completed: false }]
         }
       })
     }
   }
 
-  const onCompleted: IOnCompleted = (error?: OnCompleteData) => {
+  const onCompleted: IOnCompleted = (data?: OnCompleteData) => {
+    console.log('onCompleted', data)
     setResponding(false);
-    if (error?.message_id) {
-      const msgId = error.message_id;
+    if (data?.message_id) {
+      const msgId = data.message_id;
       setContentList(preContentList => {
         const existingMessage = preContentList.find(item => item.id === msgId);
         if (existingMessage) {
-          existingMessage.content = error.message;
+          existingMessage.content = data.message;
+          existingMessage.completed = true
           return [...preContentList];
         } else {
-          return [...preContentList, { id: msgId, type: 'A', content: error.message }]
+          return [...preContentList, { id: msgId, type: 'A', content: data.message, displayEnd: data.message.length, completed: true }]
         }
       })
     }
