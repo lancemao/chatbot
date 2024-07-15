@@ -1,4 +1,6 @@
 .chat-input-area {
+  position: sticky;
+  bottom: 0;
   background-color: white;
   user-select: none;
   -webkit-user-select: none;

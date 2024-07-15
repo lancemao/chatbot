@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 
 import "./chat.css"
 
@@ -21,7 +21,6 @@ const Chat = () => {
   const { location } = useContext(RuntimeContext)
   const [currentConversation, setCurrentConversation] = useState<ConversationData | undefined>()
   const [contentList, setContentList] = React.useState<ConversationItem[]>([])
-  const conversationContainerRef = useRef<HTMLDivElement>(null);
 
   // while agent is thinking, we will show loading animation as well as a cancel button
   const [responding, setResponding] = useState(false);
@@ -61,7 +60,7 @@ const Chat = () => {
 
   useEffect(() => {
     setTimeout(() => {
-      conversationContainerRef?.current?.scrollTo(0, conversationContainerRef?.current?.scrollHeight);
+      window.scrollTo(0, document.body.scrollHeight);
     }, 10)
   }, [responding, contentList])
 
@@ -167,7 +166,7 @@ const Chat = () => {
   return (
     <div className="chat-root">
       <Header title={appInfo?.title} onRestart={onRestart}></Header>
-      <div className='conversation-container' ref={conversationContainerRef}>
+      <div className='conversation-container'>
         {
           contentList.map((item, index) => {
             if (item.type === 'Q') {

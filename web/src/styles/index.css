@@ -6,13 +6,6 @@
   --primary-color: #3166EA;
 }
 
-#root {
-  display: flex;
-  flex-direction: column;
-  flex:1;
-  height: 100%;
-}
-
 html, body {
   overscroll-behavior-y: none;
 }
