@@ -10,10 +10,8 @@ const rootEle = document.getElementById('root');
 
 if (rootEle) {
   ReactDOM.createRoot(rootEle).render(
-    <div>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </div>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   )
 }

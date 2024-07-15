@@ -1,13 +1,12 @@
 .chat-root {
   width: 100%;
-  min-height: 100vh;
   display: flex;
+  flex: 1;
   flex-direction: column;
+  overflow-y: hidden;
 }
 
 .chat-header {
-  position: sticky;
-  top: 0;
   display: flex;
   flex-direction: row;
   align-items: center;

@@ -22,7 +22,7 @@ const Answer = ({ item, onUserOption }: { item: ConversationItem, onUserOption?:
   const increment = () => {
     const total = item.content.length
     if (item.displayEnd < total && !item.completed) {
-      item.displayEnd += Math.ceil((total - item.displayEnd) / 60) // assuming refresh rate is 60
+      item.displayEnd += Math.ceil((total - item.displayEnd) / 120)
       if (item.displayEnd >= total) {
         item.displayEnd = total
       }

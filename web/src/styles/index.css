@@ -6,8 +6,20 @@
   --primary-color: #3166EA;
 }
 
+#root {
+  display: flex;
+  flex-direction: column;
+  flex:1;
+  height: 100%;
+}
+
+html, body {
+  overscroll-behavior-y: none;
+}
+
 body {
   margin: 0;
   display: flex;
   flex-direction: column;
+  height: 100vh;
 }
