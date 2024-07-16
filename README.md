@@ -43,7 +43,7 @@ It would be dumb to tell user who they are, of course user know who they are. Ho
 
 ### Seamless Navigation
 
-In workplace, we often need to ask for help, e.g. *who knows how to use the printer* We can store such information in our Agent and the little trick is to return not only the name of the person, but also the link of the person so that when user clicks on the link, it opens a chat directly
+In workplace, we often need to ask for help, e.g. *who knows how to use the printer.* We can store such information in our Agent and the little trick is to return not only the name of the person, but also the link of the person so that when user clicks on the link, it opens a chat directly
 
 <div align="center">
 <img src="./document/images/navigation1.jpg" width="400" />

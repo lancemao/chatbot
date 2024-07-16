@@ -13,5 +13,11 @@ def create_app():
 
 app = create_app()
 
+
+@app.route('/agent/version')
+def version():
+    return "0.0.1"
+
+
 if __name__ == '__main__':
     app.run(debug=True)

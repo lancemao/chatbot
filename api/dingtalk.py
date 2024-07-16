@@ -6,6 +6,8 @@ from flask import request, Blueprint, Response, jsonify, make_response
 from flask_restful import Resource, Api
 from werkzeug.exceptions import Unauthorized
 import requests
+
+from dingtalk_decorator import login_required, get_access_token
 from passport import PassportService
 from datetime import datetime, timedelta, timezone
 import time
@@ -24,11 +26,8 @@ api = Api(dingtalk)
 
 class DDGetJSTicketApi(Resource):
     @staticmethod
-    def get():
-        access_token = get_access_token()
-        if access_token is None:
-            return {'errorCode': 400, 'message': 'cannot get access token'}
-
+    @get_access_token
+    def get(access_token):
         res = requests.get(f'https://oapi.dingtalk.com/get_jsapi_ticket?access_token={access_token}')
         if res.status_code == 200:
             data = res.json()
@@ -55,16 +54,13 @@ class DDGetJSTicketApi(Resource):
 
 class DDGetUserInfoApi(Resource):
     @staticmethod
-    def get():
+    @get_access_token
+    def get(access_token):
         args = request.args
         code = args.get('code')
         if code is None:
             data = {'errorCode': 400, 'message': 'auth code is None'}
             return json.dumps(data, ensure_ascii=False)
-
-        access_token = get_access_token()
-        if access_token is None:
-            return {'errorCode': 400, 'message': 'cannot get access token'}
 
         body = {
             "code": code
@@ -100,15 +96,9 @@ class DDGetUserInfoApi(Resource):
 
 class DDGetUserInfoDesApi(Resource):
     @staticmethod
-    def get():
-        access_token = get_access_token()
-        if access_token is None:
-            return {'errorCode': 400, 'message': 'cannot get access token'}
-
+    @login_required
+    def get(access_token, user_id):
         try:
-            user_token = request.cookies.get(user_token_key)
-            decoded = PassportService().verify(user_token)
-            user_id = decoded.get('sub')
             user_detail = get_user_detail(access_token, user_id)
             # print(user_detail)
 
@@ -131,11 +121,8 @@ class DDGetUserInfoDesApi(Resource):
 
 class DDCreateProcessApi(Resource):
     @staticmethod
-    def get(process_id):
-        access_token = get_access_token()
-        if access_token is None:
-            return 'cannot get access token'
-
+    @get_access_token
+    def get(access_token, process_id):
         args = request.args
         reason = args.get('reason')
 
@@ -174,24 +161,14 @@ class DDCreateProcessApi(Resource):
 
 class DDLeaveQuotaApi(Resource):
     @staticmethod
-    def post():
-        access_token = get_access_token()
-        if access_token is None:
-            return 'cannot get access token'
-
+    @login_required
+    def post(access_token, user_id):
         args = request.get_json()
         annual_leave_code = args['annual_leave_code'] if 'annual_leave_code' in args else None
         shift_leave_code = args['shift_leave_code'] if 'shift_leave_code' in args else None
 
         if annual_leave_code is None and shift_leave_code is None:
             return jsonify({'message': 'no leave type(s) specified'}), 400
-
-        try:
-            user_token = request.cookies.get(user_token_key)
-            decoded = PassportService().verify(user_token)
-            user_id = decoded.get('sub')
-        except Unauthorized:
-            return jsonify({'message': Unauthorized.args[0]}), 200
 
         annual_result = get_leave_in(access_token, user_id, annual_leave_code, '年假')
         shift_result = get_leave_in(access_token, user_id, shift_leave_code, '调休')
@@ -200,23 +177,6 @@ class DDLeaveQuotaApi(Resource):
             return f"{annual_result}.\n\n{shift_result}"
 
         return f"cannot get your leave information"
-
-
-def get_access_token():
-    headers = {"content-type": "application/json"}
-    body = {
-        "appKey": app_key,
-        "appSecret": app_secret
-    }
-    res = requests.post(f'https://api.dingtalk.com/v1.0/oauth2/accessToken', json=body, headers=headers)
-
-    if res.status_code == 200:
-        data = res.json()
-        access_token = data['accessToken']
-        return access_token
-    else:
-        print(res.json())
-        return None
 
 
 def get_user_access_token(code):
@@ -301,15 +261,9 @@ def get_leave_in(access_token, user_id, leave_code, leave_type):
 
     return None
 
-class DDGetApiVersion(Resource):
-    @staticmethod
-    def get():
-        return '0.0.1'
-
 
 api.add_resource(DDGetJSTicketApi, '/get-js-api-signature')
 api.add_resource(DDGetUserInfoApi, '/get-user-info')
 api.add_resource(DDGetUserInfoDesApi, '/get-user-info-des')
 api.add_resource(DDCreateProcessApi, '/process/create/<process_id>')
 api.add_resource(DDLeaveQuotaApi, '/leave/quota')
-api.add_resource(DDGetApiVersion, '/version')
