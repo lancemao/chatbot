@@ -38,18 +38,31 @@ export async function getConversationContent(conversationId: string, appCode: st
   return data.data;
 }
 
+export async function getMyInfo(appCode: string): Promise<[ConversationContent]> {
+  return await request<any>(`/agent/common/save-my-info`, 'GET', appCode);
+}
+
+export async function submitMyInfo(text: string, appCode: string): Promise<[ConversationContent]> {
+  return await request<any>(`/agent/common/save-my-info`, 'POST', appCode, { text });
+}
+
 async function request<T>(
   url: string,
   method: string,
-  appCode: string
+  appCode: string,
+  body?: any
 ): Promise<T>  {
   const accessToken = getAccessToken(appCode)
-  const options = {
+  let options: any = {
     method: method,
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${accessToken}`,
     }
+  }
+
+  if (method === 'POST') {
+    options = {...options, body: JSON.stringify(body)}
   }
 
   try {

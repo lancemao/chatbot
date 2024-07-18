@@ -1,0 +1,63 @@
+.setting-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+.setting-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 56px;
+  background-image: linear-gradient(to right, rgb(37 99 235), rgba(14 165 233));
+  color: white;
+}
+
+.setting-header-title {
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.setting-content {
+  padding: 2px 16px;
+  flex: 1;
+  display: flex;
+}
+
+.setting-info-input {
+  width: 100%;
+  border: solid 1px #bbb;
+  padding: 8px;
+  font-size: 14px;
+}
+
+.setting-message {
+  margin: 4px 16px;
+  color: #029202
+}
+
+.setting-message-error {
+  color: var(--error-text-color)
+}
+
+.setting-submit-button {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(179, 179, 179);
+  color: rgb(220, 220, 220);
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin: 0 16px 16px 16px;
+  border-radius: 6px;
+}
+
+.setting-submit-button-active {
+  color: white;
+  background-color: var(--primary-color);
+}

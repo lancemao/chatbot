@@ -15,13 +15,29 @@
   height: 56px;
   background-image: linear-gradient(to right, rgb(37 99 235), rgba(14 165 233));
   color: white;
-  padding: 0 16px;
 }
 
 .chat-header-title {
-  flex: 1;
   font-size: 15px;
   font-weight: bold;
+  margin-left: 16px;
+}
+
+.chat-header-icon-container {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  margin-right: 8px;
+}
+
+.chat-header-icon {
+  width: 24px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0 8px;
+  cursor: pointer;
 }
 
 .conversation-container {
@@ -98,5 +114,5 @@
 }
 
 .answer-text-error {
-  color: #F04438;
+  color: var(--error-text-color)
 }

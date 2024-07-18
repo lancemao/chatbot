@@ -96,6 +96,7 @@ class DDGetUserInfoApi(Resource):
 
 class DDGetUserInfoDesApi(Resource):
     @staticmethod
+    @get_access_token
     @login_required
     def get(access_token, user_id):
         try:
@@ -111,12 +112,23 @@ class DDGetUserInfoDesApi(Resource):
                 icon = f"我的头像链接是{user_detail['avatar']}" if 'avatar' in user_detail and user_detail['avatar'] else ''
                 employee_id = f"我的工号是{user_detail['job_number']}，这也是我登录钉钉的账号名" if 'job_number' in user_detail and user_detail['job_number'] else ''
                 des = f"{uid}\n{name}\n{nickname}\n{email}\n{mobile}\n{icon}\n{employee_id}"
+
+                # read user specific data
+                try:
+                    with open(f'data/{user_id}.txt', 'r') as file:
+                        content = file.read()
+                        des = des + '\n\n' + content
+                except FileNotFoundError:
+                    pass
+                except IOError:
+                    pass
+
                 # print(des)
                 return des
             else:
                 return jsonify({'message': 'cannot get user info'}), 200
-        except Unauthorized:
-            return jsonify({'message': Unauthorized.args[0]}), 200
+        except Unauthorized as e:
+            return jsonify({'message': e.description}), 200
 
 
 class DDCreateProcessApi(Resource):
@@ -130,8 +142,8 @@ class DDCreateProcessApi(Resource):
             user_token = request.cookies.get(user_token_key)
             decoded = PassportService().verify(user_token)
             user_id = decoded.get('sub')
-        except Unauthorized:
-            return jsonify({'message': Unauthorized.args[0]}), 200
+        except Unauthorized as e:
+            return jsonify({'message': e.description}), 200
 
         body = {
             "process_code": process_id,
@@ -149,7 +161,7 @@ class DDCreateProcessApi(Resource):
         if res.status_code == 200:
             data = res.json()
             if data['errcode'] == 0:
-                return json.dumps({'errorCode': 0, 'message': '已成功提交审批电子流'}, ensure_ascii=False)
+                return jsonify({'errorCode': 0, 'message': '已成功提交审批电子流'})
 
         proxy_response = Response(
             res.iter_content(),
@@ -161,6 +173,7 @@ class DDCreateProcessApi(Resource):
 
 class DDLeaveQuotaApi(Resource):
     @staticmethod
+    @get_access_token
     @login_required
     def post(access_token, user_id):
         args = request.get_json()

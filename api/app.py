@@ -8,6 +8,8 @@ def create_app():
     _app = Flask(__name__)
     from dingtalk import dingtalk
     _app.register_blueprint(dingtalk)
+    from common.my_info import my_info
+    _app.register_blueprint(my_info)
     return _app
 
 

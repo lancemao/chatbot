@@ -4,6 +4,7 @@
   line-height: 1.25rem; /* 20px */
 
   --primary-color: #3166EA;
+  --error-text-color: #F04438;
 }
 
 html, body {

@@ -15,28 +15,24 @@ def get_access_token(f):
         if access_token is None:
             return {'errorCode': 400, 'message': 'cannot get access token. check your dingtalk app_key & secret in env'}
         else:
-            return f(access_token, *args, **kwargs)
+            return f(*args, **{**kwargs, "access_token": access_token})
 
     return wrap
 
 
 def login_required(f):
     def wrap(*args, **kwargs):
-        access_token = _get_access_token()
-        if access_token is None:
-            return {'errorCode': 400, 'message': 'cannot get access token. check your dingtalk app_key & secret in env'}
-
         user_token = request.cookies.get(user_token_key)
         if user_token is None:
             return {'errorCode': 400, 'message': 'user cookie is empty'}
 
         try:
             decoded = PassportService().verify(user_token)
-        except Unauthorized:
-            return {'errorCode': 400, 'message': Unauthorized.args[0]}
+        except Unauthorized as e:
+            return {'errorCode': 400, 'message': e.description}
 
         user_id = decoded.get('sub')
-        return f(access_token, user_id, *args, **kwargs)
+        return f(*args, **{**kwargs, 'user_id': user_id})
 
     return wrap
 

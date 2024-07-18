@@ -17,7 +17,7 @@ const AboutPage = () => {
     <div className="about-container">
       <div className="chat-header">
         <div className="chat-header-title">关于{appInfo?.title}</div>
-        <div onClick={onLogClick}>运行日志</div>
+        <div style={{marginRight: 16}} onClick={onLogClick}>运行日志</div>
       </div>
       <div className="about-content">
         <Markdown content={appInfo?.description}></Markdown>
