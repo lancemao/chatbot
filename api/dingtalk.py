@@ -192,6 +192,44 @@ class DDLeaveQuotaApi(Resource):
         return f"cannot get your leave information"
 
 
+class DDAssetApi(Resource):
+    @staticmethod
+    @get_access_token
+    @login_required
+    def post(access_token, user_id):
+        args = request.get_json()
+        app_type = args['appType'] if 'appType' in args else ''
+        system_token = args['systemToken'] if 'systemToken' in args else ''
+        form_uuid = args['formUuid'] if 'formUuid' in args else ''
+
+        headers = {
+            "content-type": "application/json",
+            "x-acs-dingtalk-access-token": access_token
+        }
+        body = {
+            "appType": app_type,
+            "systemToken": system_token,
+            "userId": user_id,
+            "formUuid": form_uuid,
+            "originatorId": user_id
+        }
+
+        res = requests.post(f'https://api.dingtalk.com/v1.0/yida/forms/instances/search',
+                            headers=headers, json=body)
+
+        if res.status_code == 200:
+            data = res.json()
+            # print(data)
+            return data['data']
+        else:
+            proxy_response = Response(
+                res.iter_content(),
+                res.status_code,
+                headers=json_header
+            )
+            return proxy_response
+
+
 def get_user_access_token(code):
     headers = {"content-type": "application/json"}
     body = {
@@ -280,3 +318,4 @@ api.add_resource(DDGetUserInfoApi, '/get-user-info')
 api.add_resource(DDGetUserInfoDesApi, '/get-user-info-des')
 api.add_resource(DDCreateProcessApi, '/process/create/<process_id>')
 api.add_resource(DDLeaveQuotaApi, '/leave/quota')
+api.add_resource(DDAssetApi, '/asset/my')
