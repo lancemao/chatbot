@@ -59,6 +59,15 @@ when user asks the bot to submit an application, chances are user is not providi
 <img src="./document/images/user_option_2.jpg" width="400" />
 </div>
 
+### Private Data
+
+Store your office information in a notebook? Find it hard to remember? Now you can store all your office information in our Agent and you can ask for some specific information using natural language.
+
+<div align="center">
+<img src="./document/images/private_data_1.jpg" width="400" />
+<img src="./document/images/private_data_2.jpg" width="400" />
+</div>
+
 ### Location
 
 Have you ever been in a situation when your friend (or customer) asks where you are? Now we can use OA's API to get user's current location and answer location based questions.
