@@ -29,7 +29,7 @@ An mobile chatbot framework based on [dify agent](https://github.com/langgenius/
 
 ### User Context
 
-You can always ask LLM `who you are?` and it will give you its basic information. But you can't ask LLM `who I am?` because it doesn't have the context of the current user. Now, since we are inside dingtalk, we can get user's information via dingtalk's open api so that our Agent knows the context
+You can always ask LLM `who are you?` and it will give you its basic information. But you can't ask LLM `who am I?` because it doesn't have the context of the current user. Now, since we are inside dingtalk, we can get user's information via dingtalk's open api so that our Agent knows the context
 
 <div align="center">
 <img src="./document/images/user_context.jpg" width="400" />

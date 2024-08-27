@@ -70,7 +70,7 @@ class DDGetUserInfoApi(Resource):
 
         if res.status_code == 200:
             data = res.json()
-            # print(data)
+            print(data)
             errcode = data['errcode']
             if errcode == 0:
                 user = data['result']
@@ -101,17 +101,19 @@ class DDGetUserInfoDesApi(Resource):
     def get(access_token, user_id):
         try:
             user_detail = get_user_detail(access_token, user_id)
-            # print(user_detail)
+            print(user_detail)
 
             if user_detail is not None:
                 uid = f"我的用户 ID（user ID）是{user_detail['userid']}" if 'userid' in user_detail and user_detail['userid'] else ''
+                unionid = f"我的 Union ID（unionid）是{user_detail['unionid']}" if 'unionid' in user_detail and user_detail[
+                    'unionid'] else ''
                 name = f"我的名字是{user_detail['name']}" if user_detail['name'] else ''
                 nickname = f"我的昵称是{user_detail['nickname']}" if 'nickname' in user_detail and user_detail['nickname'] else ''
                 email = f"我的邮箱是{user_detail['email']}" if 'email' in user_detail and user_detail['email'] else ''
                 mobile = f"我的手机号码是{user_detail['mobile']}" if 'mobile' in user_detail and user_detail['mobile'] else ''
                 icon = f"我的头像链接是{user_detail['avatar']}" if 'avatar' in user_detail and user_detail['avatar'] else ''
                 employee_id = f"我的工号是{user_detail['job_number']}，这也是我登录钉钉的账号名" if 'job_number' in user_detail and user_detail['job_number'] else ''
-                des = f"{uid}\n{name}\n{nickname}\n{email}\n{mobile}\n{icon}\n{employee_id}"
+                des = f"{uid}\n{unionid}\n{name}\n{nickname}\n{email}\n{mobile}\n{icon}\n{employee_id}"
 
                 # read user specific data
                 try:
@@ -123,12 +125,12 @@ class DDGetUserInfoDesApi(Resource):
                 except IOError:
                     pass
 
-                # print(des)
+                print(des)
                 return des
             else:
-                return jsonify({'message': 'cannot get user info'}), 200
+                return {'message': 'cannot get user info'}, 200
         except Unauthorized as e:
-            return jsonify({'message': e.description}), 200
+            return {'message': e.description}, 200
 
 
 class DDCreateProcessApi(Resource):
@@ -161,7 +163,7 @@ class DDCreateProcessApi(Resource):
         if res.status_code == 200:
             data = res.json()
             if data['errcode'] == 0:
-                return jsonify({'errorCode': 0, 'message': '已成功提交审批电子流'})
+                return {'errorCode': 0, 'message': '已成功提交审批电子流'}
 
         proxy_response = Response(
             res.iter_content(),
@@ -181,7 +183,7 @@ class DDLeaveQuotaApi(Resource):
         shift_leave_code = args['shift_leave_code'] if 'shift_leave_code' in args else None
 
         if annual_leave_code is None and shift_leave_code is None:
-            return jsonify({'message': 'no leave type(s) specified'}), 400
+            return {'message': 'no leave type(s) specified'}, 400
 
         annual_result = get_leave_in(access_token, user_id, annual_leave_code, '年假')
         shift_result = get_leave_in(access_token, user_id, shift_leave_code, '调休')
@@ -261,11 +263,11 @@ def get_user_detail(access_token, user_id):
 
     if res.status_code == 200:
         data = res.json()
-        # print(data)
-        return data['result']
-    else:
-        print(res.json())
-        return None
+        print(data)
+        if data['errcode'] == 0:
+            return data['result']
+
+    return None
 
 
 def get_leave_in(access_token, user_id, leave_code, leave_type):
