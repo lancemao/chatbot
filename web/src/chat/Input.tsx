@@ -6,11 +6,13 @@ import voiceInputImage from "@/assets/images/ic_voice_input.png";
 import keyboardInputImage from "@/assets/images/ic_keyboard.png";
 import VoiceContext, { VoiceState } from "@/VoiceContext";
 import VoiceInputAnimator from "@/components/VoiceInputAnimator";
+import AppContext from "@/AppContext";
 
 const Input = ({ queryItem, onSend }) => {
 
   const inputContainerRef = useRef<HTMLDivElement>(null)
 
+  const { isPC } = useContext(AppContext)
   const { voiceState, onStart, onStop } = useContext(VoiceContext)
 
   const [usingVoice, setUsingVoice] = React.useState(false)
@@ -105,6 +107,12 @@ const Input = ({ queryItem, onSend }) => {
     setIsRecording(false)
   }
 
+  const onPressEnter = () => {
+    if (isPC) {
+      send(query)
+    }
+  }
+
   const send = (query) => {
     if (query) {
       onSend?.(query)
@@ -138,6 +146,7 @@ const Input = ({ queryItem, onSend }) => {
               value={query}
               className="chat-input"
               autoSize
+              onPressEnter={onPressEnter}
               onFocus={onTextInputFocus}
               onChange={onChange} />
         }

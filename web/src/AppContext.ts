@@ -4,6 +4,7 @@ import { AppInfo } from "./types/app";
 import { Log } from "./log/Log";
 
 type AppContent = {
+  isPC: boolean;
   user: User;
   setUser: (user: User) => void;
   appInfo: AppInfo | undefined;
@@ -13,6 +14,7 @@ type AppContent = {
 }
 
 export default createContext<AppContent>({
+  isPC: false,
   user: User.Guest,
   setUser: () => {},
   appInfo: undefined,

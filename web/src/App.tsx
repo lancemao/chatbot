@@ -16,6 +16,7 @@ import SettingPage from './setting/SettingPage';
 
 const App = () => {
 
+  const [isPC, setIsPC] = useState<boolean>(false)
   const [user, setUser] = useState<User>(User.Guest)
   const [appInfo, setAppInfo] = useState<AppInfo>()
   const [logs, setLogs] = useState<Log[]>([])
@@ -28,6 +29,7 @@ const App = () => {
 
     const queryParams = new URLSearchParams(document.location.search)
     const appCode = queryParams.get('appCode');
+    setIsPC(queryParams.get('pc') === 'true')
 
     if (appCode) {
       (async () => {
@@ -56,7 +58,7 @@ const App = () => {
   }, []);
 
   return (
-    <AppContext.Provider value={{ user, setUser, appInfo, setAppInfo, logs, addLog }}>
+    <AppContext.Provider value={{ isPC, user, setUser, appInfo, setAppInfo, logs, addLog }}>
       <Routes>
         <Route path="/chatx" element={<DingTalk />} />
         <Route path="/chatx/answer-detail" element={<AnswerDetail />} />

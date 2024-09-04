@@ -13,8 +13,8 @@ const DingTalk = () => {
 
   const queryParams = new URLSearchParams(document.location.search);
   const corpId = queryParams.get('corpId');
-
-  const { user, setUser, appInfo, addLog } = useContext(AppContext)
+  
+  const { isPC, user, setUser, appInfo, addLog } = useContext(AppContext)
   const [voiceState, setVoiceState] = useState<VoiceState>(VoiceState.PREPARING)
   const [location, setLocation] = useState<string>('')
 
@@ -74,7 +74,11 @@ const DingTalk = () => {
         addLog(Log.error("获取位置失败" + JSON.stringify(err)))
       })
 
-      setVoiceState(VoiceState.READY)
+      if (!isPC) {
+        setVoiceState(VoiceState.READY)
+      } else {
+        addLog(Log.info("PC端不支持语音识别"))
+      }
 
       if (corpId) {
         dd.runtime.permission.requestAuthCode({
